@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/deanchoi/CLionProjects/CIS340/Project1/main.c
+stdio.h
+-
+stdlib.h
+-
+node.h
+/Users/deanchoi/CLionProjects/CIS340/Project1/node.h
+
+/Users/deanchoi/CLionProjects/CIS340/Project1/node.c
+stdio.h
+-
+node.h
+/Users/deanchoi/CLionProjects/CIS340/Project1/node.h
+
+/Users/deanchoi/CLionProjects/CIS340/Project1/node.h
+
