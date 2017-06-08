@@ -33,7 +33,7 @@ struct mynode* mergeSort(struct mynode* head){
     //List is split and head of second list is assigned to *head2
     struct mynode *head2 = split(head);
 
-    //Recurrent mergesort on the two split linked lists
+    //Recursive mergesort on the two split linked lists
     head = mergeSort(head);
     head2 = mergeSort(head2);
 
