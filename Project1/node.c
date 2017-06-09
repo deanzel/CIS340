@@ -13,6 +13,11 @@ void printList(struct mynode* head) {
     struct mynode *current = head;
 
     while (current != NULL) {
+        //Condition if first node/head's value is 0 (which should technically be an 'empty' linked list.
+        if (current->value == 0) {
+            printf("This Linked List is empty.\n");
+            break;
+        }
         if (current->next != NULL) {
             printf("%d, ", current->value);
 
@@ -22,6 +27,8 @@ void printList(struct mynode* head) {
 
         current = current->next;
     };
+
+
 };
 
 struct mynode* mergeSort(struct mynode* head){
@@ -87,7 +94,7 @@ struct mynode* split(struct mynode* head) {
 
     while (fast != NULL) {
         fast = fast->next;
-        if (fast != NULL){
+        if (fast != NULL) {
             slow = slow->next;
             fast = fast->next;
         }
@@ -96,4 +103,4 @@ struct mynode* split(struct mynode* head) {
     struct mynode *head2 = slow->next;
     slow->next = NULL;
     return head2;
-};
+} ;
