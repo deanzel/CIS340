@@ -204,6 +204,33 @@ shell.c.s:
 	$(MAKE) -f CMakeFiles/Project2.dir/build.make CMakeFiles/Project2.dir/shell.c.s
 .PHONY : shell.c.s
 
+sort.o: sort.c.o
+
+.PHONY : sort.o
+
+# target to build an object file
+sort.c.o:
+	$(MAKE) -f CMakeFiles/Project2.dir/build.make CMakeFiles/Project2.dir/sort.c.o
+.PHONY : sort.c.o
+
+sort.i: sort.c.i
+
+.PHONY : sort.i
+
+# target to preprocess a source file
+sort.c.i:
+	$(MAKE) -f CMakeFiles/Project2.dir/build.make CMakeFiles/Project2.dir/sort.c.i
+.PHONY : sort.c.i
+
+sort.s: sort.c.s
+
+.PHONY : sort.s
+
+# target to generate assembly for a file
+sort.c.s:
+	$(MAKE) -f CMakeFiles/Project2.dir/build.make CMakeFiles/Project2.dir/sort.c.s
+.PHONY : sort.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -222,6 +249,9 @@ help:
 	@echo "... shell.o"
 	@echo "... shell.i"
 	@echo "... shell.s"
+	@echo "... sort.o"
+	@echo "... sort.i"
+	@echo "... sort.s"
 .PHONY : help
 
 

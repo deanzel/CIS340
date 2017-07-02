@@ -95,6 +95,12 @@
 		<Unit filename="/Users/deanchoi/CLionProjects/CIS340/Project2/shell.h">
 			<Option target="Project2"/>
 		</Unit>
+		<Unit filename="/Users/deanchoi/CLionProjects/CIS340/Project2/sort.c">
+			<Option target="Project2"/>
+		</Unit>
+		<Unit filename="/Users/deanchoi/CLionProjects/CIS340/Project2/sort.h">
+			<Option target="Project2"/>
+		</Unit>
 		<Unit filename="/Users/deanchoi/CLionProjects/CIS340/Project2/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>

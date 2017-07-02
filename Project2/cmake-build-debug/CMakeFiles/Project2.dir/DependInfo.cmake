@@ -7,6 +7,7 @@ set(CMAKE_DEPENDS_CHECK_C
   "/Users/deanchoi/CLionProjects/CIS340/Project2/floppy.c" "/Users/deanchoi/CLionProjects/CIS340/Project2/cmake-build-debug/CMakeFiles/Project2.dir/floppy.c.o"
   "/Users/deanchoi/CLionProjects/CIS340/Project2/main.c" "/Users/deanchoi/CLionProjects/CIS340/Project2/cmake-build-debug/CMakeFiles/Project2.dir/main.c.o"
   "/Users/deanchoi/CLionProjects/CIS340/Project2/shell.c" "/Users/deanchoi/CLionProjects/CIS340/Project2/cmake-build-debug/CMakeFiles/Project2.dir/shell.c.o"
+  "/Users/deanchoi/CLionProjects/CIS340/Project2/sort.c" "/Users/deanchoi/CLionProjects/CIS340/Project2/cmake-build-debug/CMakeFiles/Project2.dir/sort.c.o"
   )
 set(CMAKE_C_COMPILER_ID "AppleClang")
 
