@@ -161,9 +161,6 @@ void traverse(int l){
             if (current->entry.filename[0] == 0xE5)
                 continue;
 
-            //If attribute value is 0x00, then skip the entry for our purposes
-            //if (current->entry.attributes[0] == 0x00)
-               // continue;
 
             //If the first byte of the Filename field is 0x00, then this directory entry is free and all the
             //remaining directory entries in this directory are also free.
@@ -233,7 +230,7 @@ void traverse(int l){
         //Print out Filenames, extensions, attributes, filesize, firstcluster
         current = head;
 
-        while (current != NULL){
+        while (current->next != NULL){
 
             printf("\npath: %s", current->entry.fullpath);
             printf("\tfilename: %s", current->entry.filename);
@@ -241,7 +238,6 @@ void traverse(int l){
             printf("\tattribute: %X", current->entry.attributes[0]);
             printf("\tfilesize: %d", current->entry.file_size);
             printf("\tfirstcluster: %d\n", current->entry.first_cluster);
-
 
             current = current->next;
         }
@@ -315,8 +311,12 @@ struct mynode* addDirPath(struct mynode* node) {
         node->next = current;
         current->next = NULL;
 
+        struct mynode *previous = node;
+
 
         for (int i = 0; i < max_root_dirs; i++) {
+
+            //somehow save previous node
 
             read(fd, current->entry.filename, 8);
             read(fd, current->entry.extension, 3);
@@ -343,12 +343,10 @@ struct mynode* addDirPath(struct mynode* node) {
             if (current->entry.filename[0] == 0xE5)
                 continue;
 
-            //If attribute value is 0x00, then skip the entry for our purposes
-            //if (current->entry.attributes[0] == 0x00)
-                //continue;
-
             //If the first byte of the Filename field is 0x00, then this directory entry is free and all the
             //remaining directory entries in this directory are also free.
+
+            //problem here when we break, we don't want to return the current but actually set it back
             if (current->entry.filename[0] == 0x00)
                 break;
 
@@ -398,6 +396,7 @@ struct mynode* addDirPath(struct mynode* node) {
             //if new file is another subdirectory, recursive call
             if ((strncmp(filename, ".", 1) == 0) || (strncmp(filename, "..", 2) == 0)) {
                 struct mynode *temp = (struct mynode *) malloc(sizeof(struct mynode));
+                previous = current;
                 current->next = temp;
                 current = temp;
             } else if (current->entry.attributes[0] & 0x10) {
@@ -413,12 +412,17 @@ struct mynode* addDirPath(struct mynode* node) {
 
             } else {
                 struct mynode *temp = (struct mynode *) malloc(sizeof(struct mynode));
+                previous = current;
                 current->next = temp;
                 current = temp;
             }
 
         }
-        return current;
+        if (current->entry.filename[0] != 0x00) {
+            return current;
+        } else {
+            return previous;
+        }
     }
     else {
         return node;
