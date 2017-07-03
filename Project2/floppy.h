@@ -30,11 +30,11 @@ struct dirEntry {
     unsigned char extension[3];
     unsigned char attributes[1];
     unsigned char reserved[2];
-    unsigned short creation_time;
-    unsigned short creation_date;
-    unsigned short last_access_date;
-    unsigned short last_write_time;
-    unsigned short last_write_date;
+    unsigned char creation_time[2];
+    unsigned char creation_date[2];
+    unsigned char last_access_date[2];
+    unsigned char last_write_time[2];
+    unsigned char last_write_date[2];
     unsigned short first_cluster;
     unsigned short file_size;
     unsigned char fullpath[128];

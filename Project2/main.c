@@ -39,9 +39,9 @@ int main() {
 
         structure();
 
-        showSector(55);
-
         traverse(1);
+
+        traverse(0);
 
         showSector(10);
 

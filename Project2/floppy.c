@@ -123,10 +123,7 @@ void traverse(int l){
 
     if (mounted == 1){
 
-        //initialize dirEntry array in order to insert directory elements
-        //struct dirEntry directory[max_root_dirs];
-
-        //Create a Singly-Linked List
+        //Create a Singly-Linked List of nodes of DirectoryEntries each with a full derived pathname/fullpath
         struct mynode *head = (struct mynode*) malloc(sizeof(struct mynode));
         head->next = NULL;
         struct mynode *current = head;
@@ -227,39 +224,9 @@ void traverse(int l){
         }
 
 
-        //Print out Filenames, extensions, attributes, filesize, firstcluster
-        current = head;
-
-        while (current->next != NULL){
-
-            printf("\npath: %s", current->entry.fullpath);
-            printf("\tfilename: %s", current->entry.filename);
-            printf("\text: %s", current->entry.extension);
-            printf("\tattribute: %X", current->entry.attributes[0]);
-            printf("\tfilesize: %d", current->entry.file_size);
-            printf("\tfirstcluster: %d\n", current->entry.first_cluster);
-
-            current = current->next;
-        }
-
         //Mergesort the directory entries in the root directory by filename
         mergeSort(head);
         current = head;
-
-        printf("\nAfter mergesort so should be in order...\n");
-        while (current->next != NULL){
-
-            printf("\npath: %s", current->entry.fullpath);
-            printf("\tfilename: %s", current->entry.filename);
-            printf("\text: %s", current->entry.extension);
-            printf("\tattribute: %X", current->entry.attributes[0]);
-            printf("\tfilesize: %d", current->entry.file_size);
-            printf("\tfirstcluster: %d\n", current->entry.first_cluster);
-
-            current = current->next;
-        }
-
-
 
 
         //if '-l' is entered ('l' is true/1) then enter long traverse
@@ -272,34 +239,89 @@ void traverse(int l){
             printf("    ** H ------ HIDDEN FILE    **\n");
             printf("    ** A ------ ARCHIVE FILE   **\n");
             printf("    *****************************\n");
-            printf("\n");
 
+            while (current->next != NULL) {
+                char attriArray[6] = "-----";
 
+                //Archive attribute
+                if (current->entry.attributes[0] & 0x20) {
+                    attriArray[1] = 'A';
+                }
+                //Hidden Attribute
+                if (current->entry.attributes[0] & 0x02) {
+                    attriArray[3] = 'H';
+                }
+                //System File attribute
+                if (current->entry.attributes[0] & 0x04) {
+                    attriArray[4] = 'S';
+                }
+                //Read Only File attribute
+                if (current->entry.attributes[0] & 0x01) {
+                    attriArray[2] = 'R';
+                }
+                //Print File Attribute array
+                printf("\n%s", attriArray);
 
+                //Last modified date
+                int dateDay = (current->entry.last_write_date[0] & 0x1F);
+                int dateMonth = ((current->entry.last_write_date[1] & 0x01) << 3) | ((current->entry.last_write_date[0] & 0xE0) >> 5);
+                int dateYear = ((current->entry.last_write_date[1] & 0xFE) >> 1) + 1980;
 
+                printf("\t%.2d/%.2d/%.4d", dateMonth, dateDay, dateYear);
 
+                //Last modified time
+                int timeSec = (current->entry.last_write_time[0] & 0x1F);
+                int timeMin = ((current->entry.last_write_time[1] & 0x07) << 3) | ((current->entry.last_write_time[0] & 0xE0) >> 5);
+                int timeHour = ((current->entry.last_write_time[1] & 0xF8) >> 3);
 
+                printf(" %.2d:%.2d:%.2d", timeHour, timeMin, timeSec);
+
+                //<DIR> label
+                if (current->entry.attributes[0] & 0x10) {
+                    printf("\t\t\t<DIR>");
+                }
+                else {
+                    printf("\t\t\t\t");
+                }
+
+                //File Size in Bytes (Don't show 0 for <DIR>)
+                if (current->entry.attributes[0] & 0x10) {
+                    printf("\t\t\t");
+                }
+                else {
+                    printf("%8d\t", current->entry.file_size);
+                }
+
+                //Full Path Name
+                printf("%-40s\t", current->entry.fullpath);
+
+                //First Logical Cluster
+                printf("%d", current->entry.first_cluster);
+
+                current = current->next;
+
+            }
+            printf("\n\n");
         }
 
-        //Shorter regular traverse
+        //Shorter regular traverse where l = 0
         else {
+            printf("\n");
+            while (current->next != NULL) {
+                printf("\n%-40s", current->entry.fullpath);
+                //<DIR> label
+                if (current->entry.attributes[0] & 0x10) {
+                    printf("<DIR>");
+                }
 
+                current = current->next;
+            }
 
-
-
-
-
-
+            printf("\n\n");
 
         }
-
-
-
-
-
     }
     else {
-
 
         printf("\nThere currently is no mounted floppy disk image...\n");
     }
@@ -450,9 +472,9 @@ struct mynode* addDirPath(struct mynode* node) {
 
 //show the contents (in hex dump) of the specified sector number
 void showSector(int sector){
-    unsigned short value;
+    unsigned char value;
 
-    if (mounted == 1 && sector <= total_sectors){
+    if (mounted == 1 && sector <= total_sectors) {
         printf("\nHex Dump of Sector %d in '%s':\n", sector, imageName);
 
         printf("\n\t\t 0 \t 1 \t 2 \t 3 \t 4 \t 5 \t 6 \t 7 \t 8 \t 9 \t A \t B \t C \t D \t E \t F\n");
@@ -465,7 +487,7 @@ void showSector(int sector){
             }
 
             read(fd, &value, 1);
-            printf("\t%.2X", value);
+            printf("\t%2X", value);
 
         }
 
