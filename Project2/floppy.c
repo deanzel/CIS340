@@ -229,7 +229,7 @@ void traverse(int l){
 
         //if '-l' is entered ('l' is true/1) then enter long traverse
         if (l) {
-            printf("\n\n    *****************************\n");
+            printf("\n    *****************************\n");
             printf("    ** FILE ATTRIBUTE NOTATION **\n");
             printf("    **                         **\n");
             printf("    ** R ------ READ ONLY FILE **\n");
@@ -276,10 +276,10 @@ void traverse(int l){
 
                 //<DIR> label
                 if (current->entry.attributes[0] & 0x10) {
-                    printf("\t\t\t<DIR>");
+                    printf("\t\t<DIR>");
                 }
                 else {
-                    printf("\t\t\t\t");
+                    printf("\t\t\t");
                 }
 
                 //File Size in Bytes (Don't show 0 for <DIR>)
@@ -291,7 +291,7 @@ void traverse(int l){
                 }
 
                 //Full Path Name
-                printf("%-40s\t", current->entry.fullpath);
+                printf("%-35s\t", current->entry.fullpath);
 
                 //First Logical Cluster
                 printf("%d", current->entry.first_cluster);
@@ -299,14 +299,13 @@ void traverse(int l){
                 current = current->next;
 
             }
-            printf("\n\n");
+            printf("\n");
         }
 
         //Shorter regular traverse where l = 0
         else {
-            printf("\n");
             while (current->next != NULL) {
-                printf("\n%-40s", current->entry.fullpath);
+                printf("\n%-35s", current->entry.fullpath);
                 //<DIR> label
                 if (current->entry.attributes[0] & 0x10) {
                     printf("<DIR>");
@@ -315,7 +314,7 @@ void traverse(int l){
                 current = current->next;
             }
 
-            printf("\n\n");
+            printf("\n");
 
         }
     }
@@ -323,7 +322,6 @@ void traverse(int l){
 
         printf("\nThere currently is no mounted floppy disk image...\n");
     }
-
 
 };
 
@@ -469,10 +467,10 @@ struct mynode* addDirPath(struct mynode* node) {
 void showSector(int sector){
     unsigned char value;
 
-    if ((mounted == 1) && (sector <= total_sectors) && (sector > 0)) {
+    if ((mounted == 1) && (sector <= total_sectors) && (sector >= 0)) {
         printf("\nHex Dump of Sector %d in '%s':\n", sector, imageName);
 
-        printf("\n\t\t 0 \t 1 \t 2 \t 3 \t 4 \t 5 \t 6 \t 7 \t 8 \t 9 \t A \t B \t C \t D \t E \t F\n");
+        printf("\n        0    1    2    3    4    5    6    7    8    9    a    b    c    d    e    f\n");
 
         lseek(fd, sector*512, SEEK_SET);
 
@@ -482,7 +480,7 @@ void showSector(int sector){
             }
 
             read(fd, &value, 1);
-            printf("\t%2X", value);
+            printf("%5X", value);
 
         }
 

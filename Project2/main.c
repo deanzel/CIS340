@@ -13,12 +13,11 @@
 
 int main() {
 
-    printf("Welcome to the Floppy Disk Shell program. Please enter a command after the prompt to get started. "
+    printf("\nWelcome to the Floppy Disk Shell program. Please enter a command after the prompt to get started. "
                    "\nFor help with a list of the available commands, enter \"help\". To quit the program, enter \"quit\".\n");
 
     while (1) {
         char input[100];
-        const char s[2] = " ";
         char *token;
         int count = 0;
         int outOfRange = 0;
@@ -27,7 +26,7 @@ int main() {
 
         printPrompt();
         fgets(input, 100, stdin);
-        token = strtok(input, s);
+        token = strtok(input, " \t\n\v");
 
         while (count < 2 && !outOfRange) {
             if (token != NULL) {
@@ -41,7 +40,10 @@ int main() {
                     outOfRange = 1;
                     count++;
                 }
-                token = strtok(NULL, s);
+                token = strtok(NULL, " \t\n\v");
+            }
+            else {
+                break;
             }
         }
 
@@ -51,7 +53,7 @@ int main() {
             //Single Argument commands
         else if (count == 1) {
             if (!strcmp("quit", command)) {
-                printf("\nQuiting the floppy disk shell program...\n");
+                printf("\nQuitting the floppy disk shell program...\n");
                 break;
             } else if (!strcmp("help", command)) {
                 printHelp();
@@ -73,7 +75,8 @@ int main() {
                 mount(arg);
             } else if ((!strcmp("traverse", command)) && (!strcmp("-l", arg))) {
                 traverse(1);        //long traverse
-            } else if ((!strcmp("showsector", command)) && ((!atoi(arg)) || (!strcmp("0", arg)))) {
+            } else if ((!strcmp("showsector", command)) && ((atoi(arg) != 0) || !strcmp("0", arg))){
+
                 showSector(atoi(arg));
             } else {
                 printf("\nError. Invalid command.\n");
