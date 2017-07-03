@@ -65,7 +65,8 @@ void structure(){
         int sector = 0;         //sector count variable to calculate sector ranges of Major Disk sections
         printf("\t---Sector #---     ---Sector Types---\n");
         printf("\t      %d                   BOOT\n", sector);
-        for (int i=0; i < num_of_fats; i++){
+        int i;
+        for (i=0; i < num_of_fats; i++){
             printf("\t   %02d -- %02d               FAT%d\n", sector += 1, sector += sectors_per_fat - 1, i+1);
         }
         printf("\t   %02d -- %02d               ROOT DIRECTORY\n", sector += 1, sector + (max_root_dirs/16 - 1));
@@ -129,7 +130,8 @@ void traverse(int l){
         //move to beginning of Root directory
         lseek(fd, (num_of_fats * sectors_per_fat + 1) * bytes_per_sector, SEEK_SET);
 
-        for (int i = 0; i < max_root_dirs; i++) {
+        int i;
+        for (i = 0; i < max_root_dirs; i++) {
 
             read(fd, current->entry.filename, 8);
             read(fd, current->entry.extension, 3);
@@ -168,8 +170,8 @@ void traverse(int l){
             char filename[9];
             char ext[4];
 
-
-            for (int j = 0; j < 8; j++) {
+            int j;
+            for (j = 0; j < 8; j++) {
                 if (!isspace(current->entry.filename[j])) {
                    filename[j] = current->entry.filename[j];
                     if (j == 7) {
@@ -187,7 +189,7 @@ void traverse(int l){
 
             if (!isspace(current->entry.extension[0])) {
                 strcat(path, ".");
-                for (int j = 0; j < 3; j++) {
+                for (j = 0; j < 3; j++) {
                     if (!isspace(current->entry.extension[j])) {
                         ext[j] = current->entry.extension[j];
                         if (j == 2){
@@ -345,8 +347,8 @@ struct mynode* addDirPath(struct mynode* node) {
 
         struct mynode *previous = node;
 
-
-        for (int i = 0; i < max_root_dirs; i++) {
+        int i;
+        for (i = 0; i < max_root_dirs; i++) {
 
             //somehow save previous node
 
@@ -390,7 +392,8 @@ struct mynode* addDirPath(struct mynode* node) {
 
             strcpy(rootPath, path);
 
-            for (int j = 0; j < 8; j++) {
+            int j;
+            for (j = 0; j < 8; j++) {
                 if (!isspace(current->entry.filename[j])) {
                     filename[j] = current->entry.filename[j];
                     if (j == 7) {
@@ -408,7 +411,7 @@ struct mynode* addDirPath(struct mynode* node) {
 
             if (!isspace(current->entry.extension[0])) {
                 strcat(newPath, ".");
-                for (int j = 0; j < 3; j++) {
+                for (j = 0; j < 3; j++) {
                     if (!isspace(current->entry.extension[j])) {
                         ext[j] = current->entry.extension[j];
                         if (j == 2) {
@@ -474,7 +477,8 @@ void showSector(int sector){
 
         lseek(fd, sector*512, SEEK_SET);
 
-        for (int i = 0; i < bytes_per_sector; i++){
+        int i;
+        for (i = 0; i < bytes_per_sector; i++){
             if (i % 16 == 0) {
                 printf("\n%4X", i);
             }
