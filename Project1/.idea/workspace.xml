@@ -13,9 +13,12 @@
   <component name="ChangeListManager">
     <list default="true" id="9454b6cf-6f87-4b8f-bfbc-39ccb602e83c" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Project2/cmake-build-debug/Project2" afterPath="$PROJECT_DIR$/../Project2/cmake-build-debug/Project2" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Project2/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../Project2/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Project2/cmake-build-debug/CMakeFiles/Project2.dir/C.includecache" afterPath="$PROJECT_DIR$/../Project2/cmake-build-debug/CMakeFiles/Project2.dir/C.includecache" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Project2/cmake-build-debug/CMakeFiles/Project2.dir/depend.internal" afterPath="$PROJECT_DIR$/../Project2/cmake-build-debug/CMakeFiles/Project2.dir/depend.internal" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Project2/cmake-build-debug/CMakeFiles/Project2.dir/depend.make" afterPath="$PROJECT_DIR$/../Project2/cmake-build-debug/CMakeFiles/Project2.dir/depend.make" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Project2/floppy.c" afterPath="$PROJECT_DIR$/../Project2/floppy.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Project2/sort.c" afterPath="$PROJECT_DIR$/../Project2/sort.c" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -28,7 +31,7 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="main.c" pinned="false" current-in-tab="true">
+      <file leaf-file-name="main.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.c">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="615">
@@ -40,11 +43,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="node.c" pinned="false" current-in-tab="false">
+      <file leaf-file-name="node.c" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/node.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="570">
-              <caret line="38" column="5" lean-forward="false" selection-start-line="38" selection-start-column="5" selection-end-line="38" selection-end-column="5" />
+            <state relative-caret-position="57">
+              <caret line="40" column="14" lean-forward="false" selection-start-line="40" selection-start-column="14" selection-end-line="40" selection-end-column="14" />
               <folding>
                 <element signature="e#159#177#0" expanded="true" />
               </folding>
@@ -398,12 +401,12 @@
       <workItem from="1496931722419" duration="581000" />
       <workItem from="1497020036294" duration="16000" />
       <workItem from="1497622801161" duration="289000" />
-      <workItem from="1498970475295" duration="7370000" />
+      <workItem from="1498970475295" duration="7565000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="30781000" />
+    <option name="totallyTimeSpent" value="30976000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -840,22 +843,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/node.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="570">
-          <caret line="38" column="5" lean-forward="false" selection-start-line="38" selection-start-column="5" selection-end-line="38" selection-end-column="5" />
-          <folding>
-            <element signature="e#159#177#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/main.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="615">
           <caret line="41" column="32" lean-forward="false" selection-start-line="41" selection-start-column="32" selection-end-line="41" selection-end-column="32" />
           <folding>
             <element signature="e#77#95#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="40" column="14" lean-forward="false" selection-start-line="40" selection-start-column="14" selection-end-line="40" selection-end-column="14" />
+          <folding>
+            <element signature="e#159#177#0" expanded="true" />
           </folding>
         </state>
       </provider>

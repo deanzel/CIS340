@@ -243,7 +243,21 @@ void traverse(int l){
         }
 
         //Mergesort the directory entries in the root directory by filename
-        //mergeSort(head);
+        mergeSort(head);
+        current = head;
+
+        printf("\nAfter mergesort so should be in order...\n");
+        while (current->next != NULL){
+
+            printf("\npath: %s", current->entry.fullpath);
+            printf("\tfilename: %s", current->entry.filename);
+            printf("\text: %s", current->entry.extension);
+            printf("\tattribute: %X", current->entry.attributes[0]);
+            printf("\tfilesize: %d", current->entry.file_size);
+            printf("\tfirstcluster: %d\n", current->entry.first_cluster);
+
+            current = current->next;
+        }
 
 
 

@@ -12,6 +12,7 @@ CMakeFiles/Project2.dir/main.c.o: ../shell.h
 CMakeFiles/Project2.dir/shell.c.o: ../shell.c
 CMakeFiles/Project2.dir/shell.c.o: ../shell.h
 
+CMakeFiles/Project2.dir/sort.c.o: ../floppy.h
 CMakeFiles/Project2.dir/sort.c.o: ../sort.c
 CMakeFiles/Project2.dir/sort.c.o: ../sort.h
 
