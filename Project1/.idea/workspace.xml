@@ -12,12 +12,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9454b6cf-6f87-4b8f-bfbc-39ccb602e83c" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Project2/cmake-build-debug/Project2" afterPath="$PROJECT_DIR$/../Project2/cmake-build-debug/Project2" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Project2/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../Project2/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Project2/floppy.c" afterPath="$PROJECT_DIR$/../Project2/floppy.c" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Project2/main.c" afterPath="$PROJECT_DIR$/../Project2/main.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Project2/shell.c" afterPath="$PROJECT_DIR$/../Project2/shell.c" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />

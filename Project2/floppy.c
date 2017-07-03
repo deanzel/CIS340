@@ -6,8 +6,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <string.h>
 #include <fcntl.h>
 #include <ctype.h>
@@ -471,7 +469,7 @@ struct mynode* addDirPath(struct mynode* node) {
 void showSector(int sector){
     unsigned char value;
 
-    if (mounted == 1 && sector <= total_sectors) {
+    if ((mounted == 1) && (sector <= total_sectors) && (sector > 0)) {
         printf("\nHex Dump of Sector %d in '%s':\n", sector, imageName);
 
         printf("\n\t\t 0 \t 1 \t 2 \t 3 \t 4 \t 5 \t 6 \t 7 \t 8 \t 9 \t A \t B \t C \t D \t E \t F\n");
