@@ -1,5 +1,5 @@
 /* Dean Choi
- * Floppy Disk commands/functions: structure, traverse, showsector, showfat
+ * Floppy Disk commands/functions: structure, traverse, showsector, showfat, addDirPath, mount, unnmount
 */
 
 
@@ -464,9 +464,6 @@ struct mynode* addDirPath(struct mynode* node) {
         return node;
     }
 }
-
-
-
 
 
 

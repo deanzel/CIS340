@@ -27,13 +27,10 @@ int main() {
     while (1){
         printPrompt();
 
-        //scanf("%s", input);
-
-/*        fd = open("imagefile.img", O_RDONLY);
-
-        printf("%d\n", fd);*/
 
 
+
+        printHelp();
         mount("imagefile.img");
 
 

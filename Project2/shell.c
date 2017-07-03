@@ -11,36 +11,17 @@ void printPrompt(){
     printf("\nflop: ");
 };
 
-void printHelp(){
+void printHelp() {
 
-        printf("======== FLOP HELP =========\n");
-        printf("  <required> - [optional]\n\n");
-        printf("  fmount:\n");
-        printf("    DESC:     Mounts a local floppy image.\n");
-        printf("    USAGE:    `fmount <image>`\n");
-        printf("  fumount:\n");
-        printf("    DESC:     Unmounts a local floppy image.\n");
-        printf("    USAGE:    `fumount`\n");
-        printf("  structure:\n");
-        printf("    DESC:     Lists the structure of the floppy disk.\n");
-        printf("    USAGE:    `structure [-l]`\n");
-        printf("  traverse:\n");
-        printf("    DESC:     Lists the contents of the root directory.\n");
-        printf("    USGE:     `traverse [-l]`\n");
-        printf("  showfat:\n");
-        printf("    DESC:     Show the content of the FAT tables.\n");
-        printf("    USAGE:    `showfat`\n");
-        printf("  showsector:\n");
-        printf("    DESC:     Show the contents of a specified sector.\n");
-        printf("    USAGE:    `showsector <number>`\n");
-        printf("  showfile:\n");
-        printf("    DESC:     Show the contents of a file.\n");
-        printf("    USAGE:    `showfile <file>`\n");
-        printf("  help:\n");
-        printf("    DESC:     Displays all available commands.\n");
-        printf("    USGAE:    `help`\n");
-        printf("  exit:\n");
-        printf("    DESC:     Exits the flop program.\n");
-        printf("    USAGE:    `exit`\n");
-
+    printf("\n================ FLOPPY DISK HELP =================\n");
+    printf("             <required> - [optional]\n\n");
+    printf("  help:                      Displays a list and description of all available commands.\n");
+    printf("  quit:                      Quits the floppy disk shell program.\n");
+    printf("  fmount <img_file>:         Mounts a local floppy disk image.\n");
+    printf("  fumount:                   Unmounts the mounted floppy disk image.\n");
+    printf("  structure:                 Lists the structure of the floppy disk image.\n");
+    printf("  traverse [-l]:             Lists the contents of the root directory. Optional -l flag lists more file details.\n");
+    printf("  showfat:                   Shows the content of the FAT Table.\n");
+    printf("  showsector <sector_num>:   Shows the contents of the specific sector.\n");
+    printf("\n================ FLOPPY DISK HELP =================\n");
 };
