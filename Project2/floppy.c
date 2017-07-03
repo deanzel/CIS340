@@ -161,6 +161,10 @@ void traverse(int l){
             if (current->entry.filename[0] == 0xE5)
                 continue;
 
+            //If attribute value is 0x00, then skip the entry for our purposes
+            //if (current->entry.attributes[0] == 0x00)
+               // continue;
+
             //If the first byte of the Filename field is 0x00, then this directory entry is free and all the
             //remaining directory entries in this directory are also free.
             if (current->entry.filename[0] == 0x00)
@@ -210,9 +214,6 @@ void traverse(int l){
 
             //if current file is a subdirectory, go into addDir method
             if (current->entry.attributes[0] & 0x10) {
-                struct mynode *temp = (struct mynode*) malloc(sizeof(struct mynode));
-                current->next = temp;
-                current = temp;
 
                 //save current file position
                 long position = lseek(fd, 0, SEEK_CUR);
@@ -286,7 +287,6 @@ void traverse(int l){
 
 
 
-
     }
     else {
 
@@ -311,11 +311,10 @@ struct mynode* addDirPath(struct mynode* node) {
 
         //create a new node
         struct mynode *current = (struct mynode *) malloc(sizeof(struct mynode));
+        strcpy(path, node->entry.fullpath);
         node->next = current;
         current->next = NULL;
 
-
-        strcpy(path, node->entry.fullpath);
 
         for (int i = 0; i < max_root_dirs; i++) {
 
@@ -344,14 +343,22 @@ struct mynode* addDirPath(struct mynode* node) {
             if (current->entry.filename[0] == 0xE5)
                 continue;
 
+            //If attribute value is 0x00, then skip the entry for our purposes
+            //if (current->entry.attributes[0] == 0x00)
+                //continue;
+
             //If the first byte of the Filename field is 0x00, then this directory entry is free and all the
             //remaining directory entries in this directory are also free.
             if (current->entry.filename[0] == 0x00)
                 break;
 
+
             char newPath[128] = "/";
+            char rootPath[128];
             char filename[9];
             char ext[4];
+
+            strcpy(rootPath, path);
 
             for (int j = 0; j < 8; j++) {
                 if (!isspace(current->entry.filename[j])) {
@@ -385,35 +392,35 @@ struct mynode* addDirPath(struct mynode* node) {
                 strcat(newPath, ext);
             }
 
-            strcat(path, newPath);
-            strcpy(current->entry.fullpath, path);
+            strcat(rootPath, newPath);
+            strcpy(current->entry.fullpath, rootPath);
 
             //if new file is another subdirectory, recursive call
-            if (current->entry.attributes[0] & 0x10) {
-                if ((strncmp(filename, ".", 1) != 0) || (strncmp(filename, "..", 2) != 0)) {
-                    struct mynode *temp = (struct mynode *) malloc(sizeof(struct mynode));
-                    current->next = temp;
-                    current = temp;
+            if ((strncmp(filename, ".", 1) == 0) || (strncmp(filename, "..", 2) == 0)) {
+                struct mynode *temp = (struct mynode *) malloc(sizeof(struct mynode));
+                current->next = temp;
+                current = temp;
+            } else if (current->entry.attributes[0] & 0x10) {
 
-                    //save current file position
-                    long position = lseek(fd, 0, SEEK_CUR);
-                    //add subdirectory files
-                    struct mynode *new = addDirPath(current);
-                    current = new;
+                //save current file position
+                long position = lseek(fd, 0, SEEK_CUR);
+                //add subdirectory files
+                struct mynode *new = addDirPath(current);
+                current = new;
 
-                    //reset back to original position
-                    lseek(fd, position, SEEK_SET);
+                //reset back to original position
+                lseek(fd, position, SEEK_SET);
 
-                } else {
-                    struct mynode *temp = (struct mynode *) malloc(sizeof(struct mynode));
-                    current->next = temp;
-                    current = temp;
-                }
+            } else {
+                struct mynode *temp = (struct mynode *) malloc(sizeof(struct mynode));
+                current->next = temp;
+                current = temp;
             }
+
         }
         return current;
-
-    } else {
+    }
+    else {
         return node;
     }
 }

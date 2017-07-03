@@ -58,8 +58,8 @@
       <file leaf-file-name="floppy.c" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/floppy.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="218">
-              <caret line="301" column="19" lean-forward="true" selection-start-line="301" selection-start-column="19" selection-end-line="301" selection-end-column="19" />
+            <state relative-caret-position="507">
+              <caret line="324" column="55" lean-forward="true" selection-start-line="324" selection-start-column="55" selection-end-line="324" selection-end-column="55" />
               <folding>
                 <element signature="e#94#112#0" expanded="true" />
               </folding>
@@ -160,7 +160,7 @@
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="SwiftSettings" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file:///Users/deanchoi/CLionProjects/CIS340/Project2/floppy.c" />
+    <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file:///Users/deanchoi/CLionProjects/CIS340/Project2/floppy.h" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -425,12 +425,12 @@
       <workItem from="1498530681423" duration="60000" />
       <workItem from="1498530751597" duration="4682000" />
       <workItem from="1498944986460" duration="219000" />
-      <workItem from="1498961799130" duration="55008000" />
+      <workItem from="1498961799130" duration="60746000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="59969000" />
+    <option name="totallyTimeSpent" value="65707000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -449,7 +449,7 @@
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298639" sideWeight="0.5412787" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298639" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298639" sideWeight="0.556797" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3298639" sideWeight="0.44320297" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3298639" sideWeight="0.44320297" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298639" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15582451" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
@@ -480,14 +480,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/floppy.c</url>
-          <line>211</line>
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
-      </breakpoints>
-      <option name="time" value="9" />
+      <option name="time" value="11" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="CMakeRunConfiguration">
@@ -677,8 +670,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/floppy.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="218">
-          <caret line="301" column="19" lean-forward="true" selection-start-line="301" selection-start-column="19" selection-end-line="301" selection-end-column="19" />
+        <state relative-caret-position="507">
+          <caret line="324" column="55" lean-forward="true" selection-start-line="324" selection-start-column="55" selection-end-line="324" selection-end-column="55" />
           <folding>
             <element signature="e#94#112#0" expanded="true" />
           </folding>
