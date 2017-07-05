@@ -475,7 +475,7 @@ void showSector(int sector){
 
         printf("\n        0    1    2    3    4    5    6    7    8    9    a    b    c    d    e    f\n");
 
-        lseek(fd, sector*512, SEEK_SET);
+        lseek(fd, sector*bytes_per_sector, SEEK_SET);
 
         int i;
         for (i = 0; i < bytes_per_sector; i++){
@@ -517,7 +517,7 @@ void showFat(){
         printf("\n   0          ");     //first two FAT entries are reserved
 
         //Go through each FAT entry one-by-one and properly reset the SEEK each time
-        for (entry = 2; entry < sectors_per_fat*512*2/3; entry++){
+        for (entry = 2; entry < sectors_per_fat*bytes_per_sector*2/3; entry++){
             if (entry % 16 == 0) {
                 printf("\n%4x", entry);
             }
