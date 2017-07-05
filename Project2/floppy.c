@@ -56,20 +56,20 @@ void structure(){
 
         printf("\nStructure of Floppy Disk '%s':\n", imageName);
 
-        printf("\tnumber of FAT: \t\t\t\t\t\t%d\n", num_of_fats);
-        printf("\tnumber of sectors used by FAT: \t\t%d\n", sectors_per_fat);
-        printf("\tnumber of sectors per cluster: \t\t%d\n", sectors_per_cluster);
-        printf("\tnumber of ROOT Entries: \t\t\t%d\n", max_root_dirs);
-        printf("\tnumber of bytes per sector: \t\t%d\n", bytes_per_sector);
+        printf("    number of FAT:                      %d\n", num_of_fats);
+        printf("    number of sectors used by FAT:      %d\n", sectors_per_fat);
+        printf("    number of sectors per cluster:      %d\n", sectors_per_cluster);
+        printf("    number of ROOT Entries:             %d\n", max_root_dirs);
+        printf("    number of bytes per sector:         %d\n", bytes_per_sector);
 
         int sector = 0;         //sector count variable to calculate sector ranges of Major Disk sections
-        printf("\t---Sector #---     ---Sector Types---\n");
-        printf("\t      %d                   BOOT\n", sector);
+        printf("    ---Sector #---     ---Sector Types---\n");
+        printf("          %d                   BOOT\n", sector);
         int i;
         for (i=0; i < num_of_fats; i++){
-            printf("\t   %02d -- %02d               FAT%d\n", sector += 1, sector += sectors_per_fat - 1, i+1);
+            printf("       %02d -- %02d               FAT%d\n", sector += 1, sector += sectors_per_fat - 1, i+1);
         }
-        printf("\t   %02d -- %02d               ROOT DIRECTORY\n", sector += 1, sector + (max_root_dirs/16 - 1));
+        printf("       %02d -- %02d               ROOT DIRECTORY\n", sector += 1, sector + (max_root_dirs/16 - 1));
 
     }
     else {

@@ -48,16 +48,16 @@ flop: fmount imagefile.img
 flop: structure
 
 Structure of Floppy Disk 'imagefile.img':
-	number of FAT: 						2
-	number of sectors used by FAT: 		9
-	number of sectors per cluster: 		1
-	number of ROOT Entries: 			224
-	number of bytes per sector: 		512
-	---Sector #---     ---Sector Types---
-	      0                   BOOT
-	   01 -- 09               FAT1
-	   10 -- 18               FAT2
-	   19 -- 32               ROOT DIRECTORY
+    number of FAT:                      2
+    number of sectors used by FAT:      9
+    number of sectors per cluster:      1
+    number of ROOT Entries:             224
+    number of bytes per sector:         512
+    ---Sector #---     ---Sector Types---
+          0                   BOOT
+       01 -- 09               FAT1
+       10 -- 18               FAT2
+       19 -- 32               ROOT DIRECTORY
 
 flop: traverse
 
