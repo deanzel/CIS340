@@ -71,15 +71,15 @@ int main() {
         else if (count == 2) {
             if (!strcmp("cd", command)) {
                 cd(arg[0]);
-            }
-            if (!strcmp("path", command)) {
-                addPath(arg[0]);
-            }
-
-             /*   showSector(atoi(arg));
             } else {
                 printf("\nError. Invalid command.\n");
-            }*/
+            }
+        } else if (count == 3) {
+            if (!strcmp("path", command) && !strcmp("+", arg[0])) {
+                addPath(arg[1]);
+            } else if (!strcmp("path", command) && !strcmp("-", arg[0])) {
+                remPath(arg[1]);
+            }
         } else {
             printf("\nError. Invalid command.\n");
         }

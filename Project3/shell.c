@@ -46,7 +46,9 @@ void cd(char *path) {
 
 void addPath(char *path) {
 
-    char *newPath = strcat(cwd, "/");
+    char newPath[1024];
+    strcpy(newPath, cwd);
+    strcat(newPath, "/");
     strcat(newPath, path);
 
     if (chdir(newPath) == -1) {
@@ -56,4 +58,21 @@ void addPath(char *path) {
     }
 
 };
+
+void remPath(char *path) {
+    size_t pathLength = strlen(path);
+
+    if (strcmp(&cwd[strlen(cwd) - pathLength], path) == 0) {
+        char newPath[1024];
+        strncpy(newPath, cwd, strlen(cwd) - pathLength);
+        if (chdir(newPath) == -1) {
+            printf("\n'%s' cannot be  removed from the current path...\n", path);
+        } else {
+            getcwd(cwd, 1024);
+        }
+    } else {
+        printf("\n'%s' cannot be  removed from the current path...\n", path);
+    }
+
+}
 
