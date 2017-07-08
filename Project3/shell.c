@@ -24,3 +24,11 @@ void printPrompt(){
 
 };
 
+
+//print current working directory
+void path(){
+
+    printf("\n%s\n", cwd);
+
+};
+

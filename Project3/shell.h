@@ -10,7 +10,7 @@
 
 void printPrompt();
 
-
+void path();
 
 
 

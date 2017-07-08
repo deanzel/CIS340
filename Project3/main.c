@@ -21,61 +21,46 @@ int main() {
 
 
 
-
-
-
-
     while (1) {
         char input[500];
         char *token;
         int count = 0;
-        int outOfRange = 0;
+        //int outOfRange = 0;
 
-        char command[50], arg[50];
+        char command[100], arg[5][400];
+
+
+        //path();
 
         printPrompt();
 
         //printf(cwd);
 
         fgets(input, 500, stdin);
-        token = strtok(input, " \t\n\v");
+        token = strtok(input, " \t\v\n");
 
-        while (count < 2 && !outOfRange) {
-            if (token != NULL) {
-                if (count == 0) {
-                    strcpy(command, token);
-                    count++;
-                } else if (count == 1) {
-                    strcpy(arg, token);
-                    count++;
-                } else {
-                    outOfRange = 1;
-                    count++;
-                }
-                token = strtok(NULL, " \t\n\v");
+        while (count < 5 && token != NULL) {
+            if (count == 0) {
+                strcpy(command, token);
+                count++;
             } else {
-                break;
+                strcpy(arg[count], token);
+                count++;
             }
-        }
 
-        if (outOfRange) {
-            printf("\nThat is an incorrect input of more than two arguments.\n");
-        }
-            //Single Argument commands
-        else if (count == 1) {
+            token = strtok(NULL, " \t\n\v");
+        };
+
+
+
+        //Single Argument commands
+        if (count == 1) {
             if (!strcmp("quit", command)) {
-                printf("\nQuitting the floppy disk shell program...\n");
+                printf("\nQuitting the shell program...\n");
                 break;
-/*            } else if (!strcmp("help", command)) {
-                printHelp();
-            } else if (!strcmp("structure", command)) {
-                structure();
-            } else if (!strcmp("fumount", command)) {
-                unmount();
-            } else if (!strcmp("showfat", command)) {
-                showFat();
-            } else if (!strcmp("traverse", command)) {
-                traverse(0);        //short traverse*/
+            } else if (!strcmp("path", command)) {
+                path();
+
             } else {
                 printf("\nError. Invalid command.\n");
             }
@@ -97,9 +82,11 @@ int main() {
         }
 
 
-        return 0;
+
 
     }
+
+    return 0;
 
 }
 
