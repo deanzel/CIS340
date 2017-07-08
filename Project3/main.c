@@ -44,7 +44,7 @@ int main() {
                 strcpy(command, token);
                 count++;
             } else {
-                strcpy(arg[count], token);
+                strcpy(arg[count - 1], token);
                 count++;
             }
 
@@ -60,20 +60,23 @@ int main() {
                 break;
             } else if (!strcmp("path", command)) {
                 path();
-
-            } else {
+            } else if (!strcmp("cd", command)) {
+                cd("/");
+            }
+            else {
                 printf("\nError. Invalid command.\n");
             }
         }
             //Two Argument commands
         else if (count == 2) {
-/*            if (!strcmp("fmount", command)) {
-                mount(arg);
-            } else if ((!strcmp("traverse", command)) && (!strcmp("-l", arg))) {
-                traverse(1);        //long traverse
-            } else if ((!strcmp("showsector", command)) && ((atoi(arg) != 0) || !strcmp("0", arg))){
+            if (!strcmp("cd", command)) {
+                cd(arg[0]);
+            }
+            if (!strcmp("path", command)) {
+                addPath(arg[0]);
+            }
 
-                showSector(atoi(arg));
+             /*   showSector(atoi(arg));
             } else {
                 printf("\nError. Invalid command.\n");
             }*/

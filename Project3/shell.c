@@ -32,3 +32,28 @@ void path(){
 
 };
 
+
+void cd(char *path) {
+
+    if (chdir(path) == -1) {
+        printf("\nThe path of '%s' does not exist...\n", path);
+    } else {
+        getcwd(cwd, 1024);
+    }
+
+};
+
+
+void addPath(char *path) {
+
+    char *newPath = strcat(cwd, "/");
+    strcat(newPath, path);
+
+    if (chdir(newPath) == -1) {
+        printf("\n'%s' cannot be added to the current path...\n", path);
+    } else {
+        getcwd(cwd, 1024);
+    }
+
+};
+
