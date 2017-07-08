@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/deanchoi/CLionProjects/CIS340/Project3/main.c
+stdio.h
+-
+stdlib.h
+-
+unistd.h
+-
+fcntl.h
+-
+string.h
+-
+shell.h
+/Users/deanchoi/CLionProjects/CIS340/Project3/shell.h
+
+/Users/deanchoi/CLionProjects/CIS340/Project3/shell.c
+stdio.h
+-
+stdlib.h
+-
+unistd.h
+-
+fcntl.h
+-
+string.h
+-
+shell.h
+/Users/deanchoi/CLionProjects/CIS340/Project3/shell.h
+
+/Users/deanchoi/CLionProjects/CIS340/Project3/shell.h
+
