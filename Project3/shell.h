@@ -19,6 +19,6 @@ void addPath(char *path);
 void remPath(char *path);
 
 
-void execute();
+void execute(char *argv[]);
 
 #endif //End SHELL_H

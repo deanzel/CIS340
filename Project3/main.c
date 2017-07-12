@@ -14,8 +14,6 @@
 char cwd[1024];
 char pathEnv[1024];
 
-//extern char **environ;
-
 int main() {
     printf("\nWeclome to Dean Choi's customized Linux shell.\n");
 
@@ -27,14 +25,17 @@ int main() {
     //addPath("/Users/deanchoi/CLionProjects/CIS340/Project3/cmake-build-debug");
     //execute();
 
-    //addPath("/Users");
+    addPath("/bin");
+    addPath("/sbin");
     //remPath("/Users");
     //path();
+    char *argv[] = {"ls", "-l", 0};
+    execute(argv);
 
 
     while (1) {
-        char input[1024];
-        char inputCopy[1024];
+        char input[4096];
+        char inputCopy[4096];
         char *token;
         int count = 0;
         int pipeCount = 0;
@@ -47,10 +48,10 @@ int main() {
         printPrompt();
 
 
-        fgets(input, 1024, stdin);
+        fgets(input, 4096, stdin);
         strcpy(inputCopy, input);
 
-        if (strstr(inputCopy, " | ") != NULL){
+        if (strstr(inputCopy, " | ") != NULL){  //pipes exist in the large input
             //manage the number of pipes and parse them
             //split pipes and replace the | with \a (bell escape character which is non-printing)
 
@@ -59,6 +60,8 @@ int main() {
                 //inputCopy[3] = (char) 28;
 
                // char *delimeter[] = {(char) 28, 0};
+                //can replace middle char of '|' with \a for alert bell (non-printed char)
+                //then when we run it,
 
 
 
@@ -68,7 +71,7 @@ int main() {
 
 
         } else {
-            //no pipes
+            //no pipes exist in the input, so just one "command"
 
             //tokenize multiple strings at once for possibility of double quotes enclosed string with a space
             token = strtok(inputCopy, " \t\v\n");
@@ -95,7 +98,7 @@ int main() {
                 } else if (!strcmp("cd", command)) {
                     cd("/");
                 } else if (!strcmp("ls", command)){
-                    execute();
+                    //execute();
                 }
                 else {
                     printf("\nError. Invalid command.\n");

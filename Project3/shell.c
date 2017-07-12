@@ -9,7 +9,6 @@
 #include <string.h>
 #include "shell.h"
 
-//extern char **environ;
 //global variable of pathname from main.c
 extern char cwd[1024];
 extern char pathEnv[1024];
@@ -53,7 +52,7 @@ void printPath(){
 };
 
 
-//append a folder to the current path; going to use setenv with overwrite set to 1; must start with "/"
+//append a folder to the current path; must start with "/", not end with "/", and not contain ":"
 void addPath(char *path) {
 
     if ((path[0] == '/') && (path[strlen(path) - 1] != '/') && (strchr(path, ':') == NULL)){
@@ -74,7 +73,7 @@ void addPath(char *path) {
 };
 
 
-//remove a folder from the current path; going to use setenv with overwrite set to 1
+//remove a folder from the current path; in order to successfully remove, start with "/" and have the matching case as well
 void remPath(char *path) {
     char *token;
     int match = 0;
@@ -116,35 +115,47 @@ void remPath(char *path) {
 
 
 
-//int execl (const char *path, const char *arg, ...);
+
 // int execv(const char *path, char *const argv[]);
 //execve passing in environ variable
 //test if path environment searching works with a hello.c code example
 /*int execl(const char *path, const char *arg, ...);
-int execlp(const char *file, const char *arg, ...);
-int execle(const char *path, const char *arg,
-..., char * const envp[]);
+int execle(const char *path, const char *arg, ..., char * const envp[]);
 int execv(const char *path, char *const argv[]);
-int execvp(const char *file, char *const argv[]);
-int execvpe(const char *file, char *const argv[],*/
+int execve(const char *filename, char *const argv[], char *const envp[]);*/
 
 //execute function that takes in the the char* arg[][] pointer, statement number (starting from 0), number of pipes (0 to num)
 //make it recursive
 //fork within the parent and setup all the piping first; then use the execve call at the end of setting up all the wiring.
 
-void execute(){
+void execute(char *argv[]) {
     pid = fork();
 
-    //char *argv[] = {"ls", "-l", 0};
-    char *argv[] = {"hello", 0};
+    if (pid == 0) { //child
+        char pathString[1024];
+        char *token;
+        char buffer[1024];
 
-    if (pid == 0) {
-        execvp(argv[0], argv);
+        strcpy(pathString, pathEnv);
+
+        token = strtok(pathString, ":");
+        while (token != NULL) {
+            strcpy(buffer, token);
+            strcat(buffer, "/");
+            strcat(buffer, argv[0]);
+
+            //execv will not return and execute the binary if it exists in that path folder; else it will continue
+            execv(buffer, argv);
+            token = strtok(NULL, ":");
+            buffer[0] = 0;
+        }
+
         printf("\nThat is an incorrect command...\n");
 
+    } else {    //parent
+        //sleep for 100 milliseconds
+        usleep(100000);
     }
-
-
 
 };
 
