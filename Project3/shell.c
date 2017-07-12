@@ -117,11 +117,7 @@ void remPath(char *path) {
 
 
 // int execv(const char *path, char *const argv[]);
-//execve passing in environ variable
-//test if path environment searching works with a hello.c code example
-/*int execl(const char *path, const char *arg, ...);
-int execle(const char *path, const char *arg, ..., char * const envp[]);
-int execv(const char *path, char *const argv[]);
+/*int execv(const char *path, char *const argv[]);
 int execve(const char *filename, char *const argv[], char *const envp[]);*/
 
 //execute function that takes in the the char* arg[][] pointer, statement number (starting from 0), number of pipes (0 to num)

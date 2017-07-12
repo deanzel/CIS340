@@ -17,13 +17,8 @@ char pathEnv[1024];
 int main() {
     printf("\nWeclome to Dean Choi's customized Linux shell.\n");
 
-
     getcwd(cwd, 1024);
     pathEnv[0] = 0;
-    //execvp("ls", 0);
-
-    //addPath("/Users/deanchoi/CLionProjects/CIS340/Project3/cmake-build-debug");
-    //execute();
 
     addPath("/bin");
     addPath("/sbin");
@@ -52,7 +47,7 @@ int main() {
         strcpy(inputCopy, input);
 
         if (strstr(inputCopy, " | ") != NULL){  //pipes exist in the large input
-            //manage the number of pipes and parse them
+            //manage the number of pipes and parse them; figure this out later
             //split pipes and replace the | with \a (bell escape character which is non-printing)
 
 
@@ -124,10 +119,7 @@ int main() {
 
         }
         }
-
-
-
-
+    
 
 
     return 0;
