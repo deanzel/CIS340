@@ -42,10 +42,13 @@ void cd(char *path) {
 
 
 //print current pathEnv variable
-void path(){
+void printPath(){
 
-    printf("\n%s\n", pathEnv);
-    //printf("\n%s\n", getenv("PATH"));
+    if (strcmp(pathEnv, "") == 0) {
+        printf("\nThe current path environment is empty. Please add at least one path folder...\n");
+    } else {
+        printf("\n%s\n", pathEnv);
+    }
 
 };
 
@@ -54,18 +57,13 @@ void path(){
 void addPath(char *path) {
 
     if ((path[0] == '/') && (path[strlen(path) - 1] != '/') && (strchr(path, ':') == NULL)){
-        //char newPath[1024];
-        //strcpy(newPath, getenv("PATH"));
-        //strcat(newPath, ":");
-        //strcat(newPath, path);
+
         if (strlen(pathEnv) != 0) {
             strcat(pathEnv, ":");
         }
         strcat(pathEnv, path);
 
-        //setenv("PATH", newPath, 1);
-        //newPath[0] = 0;
-        printf("\n%s\n", pathEnv);
+        printPath();
     } else if (strchr(path, ':') != NULL) {
         printf("\n'%s' cannot be added to the current PATH env. Remove all ':' and enter one folder at a time.\n", path);
     }
@@ -103,10 +101,9 @@ void remPath(char *path) {
             newPath[strlen(newPath) - 1] = 0;
         }
         strcpy(pathEnv, newPath);
-        //setenv("PATH", newPath, 1);
         newPath[0] = 0;
         pathCopy[0] = 0;
-        printf("\n%s\n", pathEnv);
+        printPath();
     } else {
         printf("\n'%s' cannot be removed from the current PATH env. Please use the format of '/abc/def' with proper casing to remove an existing path folder.\n", path);
         newPath[0] = 0;

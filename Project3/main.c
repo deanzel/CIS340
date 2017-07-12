@@ -27,9 +27,9 @@ int main() {
     //addPath("/Users/deanchoi/CLionProjects/CIS340/Project3/cmake-build-debug");
     //execute();
 
-    addPath("/Users");
-    remPath("/Users");
-    path();
+    //addPath("/Users");
+    //remPath("/Users");
+    //path();
 
 
     while (1) {
@@ -91,7 +91,7 @@ int main() {
                     printf("\nQuitting the shell program...\n");
                     break;
                 } else if (!strcmp("path", command)) {
-                    path();
+                    printPath();
                 } else if (!strcmp("cd", command)) {
                     cd("/");
                 } else if (!strcmp("ls", command)){

@@ -10,7 +10,7 @@
 
 void printPrompt();
 
-void path();
+void printPath();
 
 void cd(char *path);
 
@@ -20,7 +20,5 @@ void remPath(char *path);
 
 
 void execute();
-
-
 
 #endif //End SHELL_H
