@@ -22,7 +22,7 @@ int main() {
 
 
     while (1) {
-        char input[500];
+        char input[1024];
         char *token;
         int count = 0;
         //int outOfRange = 0;
@@ -30,7 +30,6 @@ int main() {
         char command[100], arg[5][400];
 
 
-        //path();
 
         printPrompt();
 
@@ -92,8 +91,6 @@ int main() {
     return 0;
 
 }
-
-
 
 
 
