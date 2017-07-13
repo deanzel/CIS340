@@ -140,7 +140,7 @@ int main() {
                 //memset(fd, 0, sizeof(fd));
 
                 //executePipe(argv, (int**) fd, 0, pipeCount);
-                executePipe(argv, fd, 0, pipeCount);
+                executePipe(argv, fd, pipeCount);
             }
 
 
