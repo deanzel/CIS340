@@ -13,7 +13,7 @@
 
 char cwd[1024];
 char pathEnv[1024];
-int maxArgs = 15;
+int maxArgs = 15;   //maximum number of Arguments per
 int maxArgLen = 100;
 
 int main() {
@@ -42,11 +42,10 @@ int main() {
 
 
         fgets(input, 4096, stdin);
-        input[strcspn(input, "\n")] = 0;
-        //strcpy(input, "ls -l");
+        input[strcspn(input, "\n")] = 0;    //gets rid of newline at end of input
         strcpy(inputCopy, input);
 
-        if (strstr(inputCopy, " | ") != NULL){  //pipes exist in the large input
+        if (strstr(inputCopy, " | ") != NULL) {  //pipes exist in the large input
             //manage the number of pipes and parse them; figure this out later
             //split pipes and replace the | with \a (bell escape character which is non-printing)
 
@@ -54,7 +53,7 @@ int main() {
             while (strstr(inputCopy, " | ") != NULL) {
                 //inputCopy[3] = (char) 28;
 
-               // char *delimeter[] = {(char) 28, 0};
+                // char *delimeter[] = {(char) 28, 0};
                 //can replace middle char of '|' with \a for alert bell (non-printed char)
                 //then when we run it,
 
@@ -63,18 +62,16 @@ int main() {
             }
 
 
-
-
         } else {
-            //no pipes exist in the input, so just one "command"
-            //bug: we can only handle up to 15 arguments in each command line
+            //no pipes exist in the input, so just one set of command arguments
+            //limitation: we can only handle up to 15 arguments in each command line (could increase though since we use malloc)
 
             //tokenize multiple strings at once for possibility of double quotes enclosed string with a space
             //for now just statically declare argv[]
             //char argv[15][100];
             char **argv;
 
-            argv = malloc(maxArgs * sizeof(char*));
+            argv = malloc(maxArgs * sizeof(char *));
             int argCount = 0;
 
             //tokenize an input string while not splitting on a space within two double quotes
@@ -88,7 +85,7 @@ int main() {
             //pch1 = strtok_r(test, "\"", &save_ptr1);
 
             while (pch1 != NULL) {
-                if(inQuotes) {
+                if (inQuotes) {
                     argv[argCount] = malloc((maxArgLen + 1) * sizeof(char));
                     strcpy(argv[argCount], pch1);
                     pch1 = strtok_r(NULL, "\"", &save_ptr1);
@@ -112,28 +109,25 @@ int main() {
 
 
 
-            //Single Argument commands
+            //Single Argument commands; search internal commands first
             if (argCount == 1) {
                 if (!strcmp("quit", argv[0])) {
                     printf("\nQuitting the shell program...\n");
                     break;
                 } else if (!strcmp("path", argv[0])) {
                     printPath();
-                } else if (!strcmp("cd", argv[0])) {
+                } else if (!strcmp("cd", argv[0])) {    //cd with nothing after will default to cd(root);
                     cd("/");
-                }
-                else {
+                } else {
                     execute(argv);
                 }
-            }
-                //Two Argument commands
-            else if (argCount == 2) {
+            } else if (argCount == 2) {  //Two Argument commands; search internals first
                 if (!strcmp("cd", argv[0])) {
                     cd(argv[1]);
                 } else {
                     execute(argv);
                 }
-            } else if (argCount == 3) {
+            } else if (argCount == 3) { //3 Argument commands; only internals possible are path + or -
                 if (!strcmp("path", argv[0]) && !strcmp("+", argv[1])) {
                     addPath(argv[2]);
                 } else if (!strcmp("path", argv[0]) && !strcmp("-", argv[1])) {
@@ -145,9 +139,10 @@ int main() {
                 execute(argv);
             }
 
+            free(argv);     //deallocate argv[]
 
         }
-        }
+    }
 
 
 
