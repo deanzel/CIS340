@@ -116,7 +116,6 @@ void remPath(char *path) {
 
 
 
-
 // int execv(const char *path, char *const argv[]);
 //execute function that takes in the the char* arg[] pointer array; only for 0 pipes
 
@@ -158,7 +157,7 @@ void execute(char *argv[]) {
             }
         }
 
-        printf("\n1That is an invalid command...\n");
+        printf("\nThat is an invalid command...\n");
         exit(1);
 
     } else {    //parent
@@ -208,12 +207,12 @@ void executeP(char *argv[], pid_t pid) {
             }
         }
 
-        printf("\n2That is an invalid command...\n");
+        printf("\nThat is an invalid command...\n");
 
     } else {    //parent won't run execute anything
         //sleep for 100 milliseconds
         usleep(100000);
-        printf("\n3That is an invalid command...\n");
+        printf("\nThat is an invalid command...\n");
     }
 };
 
@@ -222,6 +221,7 @@ void handler(int signum) {
     printf("%d: shit went down... w/ signum=%d\n", getpid(), signum);
     exit(0);
 };
+
 
 
 //new method, will actually not need to be recursive at all; form all pipes from the parent in the beginning and then fork the children
@@ -347,8 +347,14 @@ void executePipe(char ***argv, int **fd, int pipeCount) {
                 }
 
                 //now run executeP() method
+                //usleep(100000);
                 executeP(argv[i], pid);
-
+                //this is reached if there is an error running the command
+                dup2(saved_stdout[i], 1);
+                close(saved_stdout[i]);
+                //the stdout is re-established to the monitor
+                printf("\nInvalid command in Process %d.\n", i + 1);
+                exit(1);
 
             } else {    //parent process
                 //close all pipes

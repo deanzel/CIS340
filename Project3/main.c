@@ -22,30 +22,10 @@ int main() {
     getcwd(cwd, 1024);
     pathEnv[0] = 0;
 
-    addPath("/bin");
-    addPath("/sbin");
-    addPath("/usr/bin");
-    cd("/Users/deanchoi");
-
-    //int *fd[2];
-    /*char *argv[2][3];
-    argv[0][0] = "ls";
-    argv[0][1] = "-l";
-    argv[0][2] = 0;
-    argv[1][0] = "grep";
-    argv[1][1] = "txt";
-    argv[1][2] = 0;*/
-
-    /*char argv[3][3][maxArgLen] = {
-            {"ls", "-l", 0},
-            {"grep", "txt", 0},
-            {"grep", "my", 0}
-
-    };
-
-    executePipe(argv, fd, 0, 1);*/
-
-
+    //addPath("/bin");
+    //addPath("/sbin");
+    //addPath("/usr/bin");
+    //cd("/Users/deanchoi");
 
     while (1) {
         char input[4096];
@@ -56,9 +36,9 @@ int main() {
         printPrompt();
 
 
-        //fgets(input, 4096, stdin);
-        //input[strcspn(input, "\n")] = 0;    //gets rid of newline at end of input
-        strcpy(input, "ls -l | grep txt | grep my");
+        fgets(input, 4096, stdin);
+        input[strcspn(input, "\n")] = 0;    //gets rid of newline at end of input
+        //strcpy(input, "ls -l | grep txt | grep my");
         strcpy(inputCopy, input);
 
         char *ret;
