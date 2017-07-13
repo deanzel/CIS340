@@ -168,31 +168,96 @@ void execute(char *argv[]) {
 };
 
 
+//special execute method we run for any of the pipe processes; almost same as execute() except we don't call fork() in the method and pass in the pid
+void executeP(char *argv[], pid_t pid) {
+
+    if (pid == 0) { //child
+        char pathString[1024];
+        char *token;
+        char buffer[1024];
+
+        //if the first argument starts with ./ then run in current working directory first
+        if (!strncmp(argv[0], "./", 2)) {
+            char editedArg[100];
+            char fullCwd[1024];
+            strcpy(editedArg, &argv[0][2]);
+            strcpy(argv[0], editedArg);
+
+            strcpy(fullCwd, cwd);
+            strcat(fullCwd, "/");
+            strcat(fullCwd, editedArg);
+
+            execv(fullCwd, argv);
+            printf("\nbitching\n");
+        } else {    //all other cases, then try to run binary in all the various path folders
+
+            strcpy(pathString, pathEnv);
+
+            token = strtok(pathString, ":");
+            while (token != NULL) {
+                strcpy(buffer, token);
+                strcat(buffer, "/");
+                strcat(buffer, argv[0]);
+
+                //execv will not return and execute the binary if it exists in that path folder; else it will continue
+                execv(buffer, argv);
+                token = strtok(NULL, ":");
+                buffer[0] = 0;
+            }
+        }
+
+        printf("\nThat is an invalid command...\n");
+        exit(1);
+
+    } else {    //parent
+        //sleep for 100 milliseconds
+        usleep(100000);
+    }
+};
+
+
 // statement number (starting from 0), number of pipes (0 to num), make it recursive,
 // fork within the parent and setup all the piping first; then use the execve call at the end of setting up all the wiring.
 //should take in the triple string array of all the inputs, filedescriptor 2d array for each of the created pipes fd[i][2], index of which pipe/statement we are at, total number of pipes
 // recursive call if index < pipeCount; we have a universal filedescriptor 2d array; also each process will wait for the previous to terminate before executing its set of commands
 
-void executePipe(char **argv[], int *fd[], int index, int pipeCount) {
+void executePipe(char ***argv, int **fd, int index, int pipeCount) {
     pid_t pid1, pid2;
 
     //set it up for one pipe at first; so only fd[0][2], pipeCount = 1, and *argv[2][]
 
     //for the very first cmd set, keep stdin at 0 but redirect output to pipe
-    if (index == 0) {
+    //case if we only have 1 pipe, then don't need recursive call
+    if ((index == 0) && (pipeCount == 1)) {
         //create the first pipe
         if (pipe(fd[0]) != 0) {
             perror("Pipe cannot be opened...");
             exit(1);
         }
-        if ((pid1 = fork()) == 0) {     //child
+        if ((pid1 = fork()) == 0) {     //child1
             close(1);
             dup(fd[0][1]);
             close(fd[0][1]);
             close(fd[0][0]);
-            executePipe(***argv, **fd, index + 1, pipeCount);
+            executeP(argv[0], pid1);
+            //close(0);
+            perror("Invalid command");
+            //executePipe(***argv, **fd, index + 1, pipeCount);
+        } else if ((pid2 = fork()) == 0) {  //child2
+            close(0);
+            dup(fd[0][0]);
+            close(fd[0][0]);
+            close(fd[0][1]);
+            executeP(argv[1], pid2);
+            //close(1);
+            perror("Invalid command");
+
+        } else {    //parent execution closes the pipe
+            close(fd[0][0]);
+            close(fd[0][1]);
+            waitpid(pid1, NULL, 0);
+            waitpid(pid2, NULL, 0);
         }
-        //else would be a parent execution
 
     } else if (index < pipeCount) {    //next
         //create next needed pipe
