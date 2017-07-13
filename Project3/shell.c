@@ -158,7 +158,7 @@ void execute(char *argv[]) {
             }
         }
 
-        printf("\nThat is an invalid command...\n");
+        printf("\n1That is an invalid command...\n");
         exit(1);
 
     } else {    //parent
@@ -190,6 +190,7 @@ void executeP(char *argv[], pid_t pid) {
 
             execv(fullCwd, argv);
             printf("\nThe binary of './%s' does not exist in the current working directory...\n", editedArg);
+            exit(1);
         } else {    //all other cases, then try to run binary in all the various path folders
 
             strcpy(pathString, pathEnv);
@@ -207,13 +208,12 @@ void executeP(char *argv[], pid_t pid) {
             }
         }
 
-        printf("\nThat is an invalid command...\n");
-        exit(1);
+        printf("\n2That is an invalid command...\n");
 
     } else {    //parent won't run execute anything
         //sleep for 100 milliseconds
         usleep(100000);
-        printf("\nThat is an invalid command...\n");
+        printf("\n3That is an invalid command...\n");
     }
 };
 
@@ -238,31 +238,39 @@ void executePipe(char **argv[maxArgLen], int **fd, int index, int pipeCount) {
     //for the very first cmd set, keep stdin at 0 but redirect output to pipe
     //case if we only have 1 pipe, then don't need recursive call
     if ((index == 0) && (pipeCount == 1)) {
+        char error[50];
+        error[0] = 0;
+
         //create the first pipe
         if (pipe(fd[0]) != 0) {
             perror("Pipe cannot be opened...");
             exit(1);
         }
         if ((pid1 = fork()) == 0) {     //child1
+            //save the stdout as a new file descriptor in order to restore later if error.
+            int saved_stdout = dup(1);
             close(1);
             dup2(fd[0][1], 1);
             close(fd[0][1]);
             close(fd[0][0]);
             executeP(argv[0], pid1);
             //only reach if there is an error in the command
-            close(0);
-            printf("\nInvalid command... ah shit\n");
+            dup2(saved_stdout, 1);
+            close(saved_stdout);
+
+            //the stdout is re-established to the monitor
+            printf("\nInvalid command in Process 1.\n");
+            exit(1);
 
         } else if ((pid2 = fork()) == 0) {  //child2
             close(0);
             dup2(fd[0][0], 0);
             close(fd[0][0]);
             close(fd[0][1]);
-            waitpid((pid1 - 1), NULL, 0);
+            //waitpid((pid1 - 1), NULL, 0);
             executeP(argv[1], pid2);
-            //only reach if there is an error in the command
+            //only reach if there is an error in the command; don't need to redirect back to stdout as the error is already printed from executeP() method
             close(1);
-            printf("\nInvalid command2... ah shit\n");
 
         } else {    //parent execution closes the pipe
             close(fd[0][0]);
