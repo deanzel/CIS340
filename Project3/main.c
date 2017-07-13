@@ -24,6 +24,7 @@ int main() {
 
     addPath("/bin");
     addPath("/sbin");
+    addPath("/usr/bin");
     cd("/Users/deanchoi");
 
     /*int fd[1][2];
@@ -54,9 +55,9 @@ int main() {
         printPrompt();
 
 
-        //fgets(input, 4096, stdin);
-        //input[strcspn(input, "\n")] = 0;    //gets rid of newline at end of input
-        strcpy(input, "ls -l | grep txt");
+        fgets(input, 4096, stdin);
+        input[strcspn(input, "\n")] = 0;    //gets rid of newline at end of input
+        //strcpy(input, "ls -l | grep txt");
         strcpy(inputCopy, input);
 
         char *ret;
@@ -132,7 +133,8 @@ int main() {
 
             //the char *argv[pipeCount + 1][argCount] has been fully processed and we can send it into the pipe execute method along with the pipeCount
             //and we'll statically allocate the memory for the filedescriptor 2d array
-            int *fd[pipeCount];
+            int fd[pipeCount][2];
+            //execute1Pipe(argv);
 
             executePipe(argv, fd, 0, pipeCount);
 

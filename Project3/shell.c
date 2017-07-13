@@ -12,6 +12,7 @@
 //global variable of cwd and pathEnv from main.c
 extern char cwd[1024];
 extern char pathEnv[1024];
+extern int maxArgLen;
 
 int pid;
 
@@ -206,7 +207,7 @@ void executeP(char *argv[], pid_t pid) {
             }
         }
 
-        printf("\nThat is an invalid command...\n");
+        printf("\n%d: That is an invalid command...\n", getpid());
         exit(1);
 
     } else {    //parent
@@ -216,12 +217,64 @@ void executeP(char *argv[], pid_t pid) {
 };
 
 
+void handler(int signum) {
+    printf("%d: shit went down... w/ signum=%d\n", getpid(), signum);
+    exit(0);
+};
+
+
+//Separate test pipe execution method for just 1 pipe scenario
+void execute1Pipe(char ***argv) {
+    pid_t pid1, pid2;
+    int fd[2];
+
+
+    //create the first pipe
+    if (pipe(fd) != 0) {
+        perror("Pipe cannot be opened...");
+        exit(1);
+    }
+    signal(SIGPIPE, handler);
+
+    if ((pid1 = fork()) == 0) {     //child1
+        close(1);
+        dup2(fd[1], 1);
+        close(fd[1]);
+        close(fd[0]);
+        executeP(argv[0], pid1);
+        //close(0);
+        perror("Invalid command");
+    } else if ((pid2 = fork()) == 0) {  //child2
+        close(0);
+        dup2(fd[0], 0);
+        close(fd[0]);
+        close(fd[1]);
+        //sleep(1);
+        executeP(argv[1], pid2);
+        //close(1);
+        perror("Invalid command");
+
+    } else {    //parent execution closes the pipe
+        printf("pid1=%d\n", pid1);
+        printf("pid2=%d\n", pid2);
+
+        //close(fd[0][0]);
+        //close(fd[0][1]);
+        waitpid(pid1, NULL, 0);
+        waitpid(pid2, NULL, 0);
+        close(fd[0]);
+        close(fd[1]);
+
+    }
+
+};
+
 // statement number (starting from 0), number of pipes (0 to num), make it recursive,
 // fork within the parent and setup all the piping first; then use the execve call at the end of setting up all the wiring.
 //should take in the triple string array of all the inputs, filedescriptor 2d array for each of the created pipes fd[i][2], index of which pipe/statement we are at, total number of pipes
 // recursive call if index < pipeCount; we have a universal filedescriptor 2d array; also each process will wait for the previous to terminate before executing its set of commands
 
-void executePipe(char ***argv, int **fd, int index, int pipeCount) {
+void executePipe(char **argv[maxArgLen], int **fd, int index, int pipeCount) {
     pid_t pid1, pid2;
 
     //set it up for one pipe at first; so only fd[0][2], pipeCount = 1, and *argv[2][]
@@ -236,16 +289,15 @@ void executePipe(char ***argv, int **fd, int index, int pipeCount) {
         }
         if ((pid1 = fork()) == 0) {     //child1
             close(1);
-            dup(fd[0][1]);
+            dup2(fd[0][1], 1);
             close(fd[0][1]);
             close(fd[0][0]);
             executeP(argv[0], pid1);
             //close(0);
             perror("Invalid command");
-            //executePipe(***argv, **fd, index + 1, pipeCount);
         } else if ((pid2 = fork()) == 0) {  //child2
             close(0);
-            dup(fd[0][0]);
+            dup2(fd[0][0], 0);
             close(fd[0][0]);
             close(fd[0][1]);
             executeP(argv[1], pid2);
@@ -253,10 +305,13 @@ void executePipe(char ***argv, int **fd, int index, int pipeCount) {
             perror("Invalid command");
 
         } else {    //parent execution closes the pipe
-            close(fd[0][0]);
-            close(fd[0][1]);
+            //close(fd[0][0]);
+            //close(fd[0][1]);
             waitpid(pid1, NULL, 0);
             waitpid(pid2, NULL, 0);
+            close(fd[0][0]);
+            close(fd[0][1]);
+
         }
 
     } else if (index < pipeCount) {    //next
@@ -277,7 +332,7 @@ void executePipe(char ***argv, int **fd, int index, int pipeCount) {
             //reroute output of child to read of newly created pipe[index]
             dup(fd[index][0]);
             close(fd[index][0]);
-            executePipe(***argv, **fd, index + 1, pipeCount);
+            //executePipe(***argv, **fd, index + 1, pipeCount);
 
         }//else here would be parent execution
 
