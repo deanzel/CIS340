@@ -189,7 +189,7 @@ void executeP(char *argv[], pid_t pid) {
             strcat(fullCwd, editedArg);
 
             execv(fullCwd, argv);
-            printf("\nbitching\n");
+            printf("\nThe binary of './%s' does not exist in the current working directory...\n", editedArg);
         } else {    //all other cases, then try to run binary in all the various path folders
 
             strcpy(pathString, pathEnv);
@@ -207,12 +207,13 @@ void executeP(char *argv[], pid_t pid) {
             }
         }
 
-        printf("\n%d: That is an invalid command...\n", getpid());
+        printf("\nThat is an invalid command...\n");
         exit(1);
 
-    } else {    //parent
+    } else {    //parent won't run execute anything
         //sleep for 100 milliseconds
         usleep(100000);
+        printf("\nThat is an invalid command...\n");
     }
 };
 
@@ -223,51 +224,6 @@ void handler(int signum) {
 };
 
 
-//Separate test pipe execution method for just 1 pipe scenario
-void execute1Pipe(char ***argv) {
-    pid_t pid1, pid2;
-    int fd[2];
-
-
-    //create the first pipe
-    if (pipe(fd) != 0) {
-        perror("Pipe cannot be opened...");
-        exit(1);
-    }
-    signal(SIGPIPE, handler);
-
-    if ((pid1 = fork()) == 0) {     //child1
-        close(1);
-        dup2(fd[1], 1);
-        close(fd[1]);
-        close(fd[0]);
-        executeP(argv[0], pid1);
-        //close(0);
-        perror("Invalid command");
-    } else if ((pid2 = fork()) == 0) {  //child2
-        close(0);
-        dup2(fd[0], 0);
-        close(fd[0]);
-        close(fd[1]);
-        //sleep(1);
-        executeP(argv[1], pid2);
-        //close(1);
-        perror("Invalid command");
-
-    } else {    //parent execution closes the pipe
-        printf("pid1=%d\n", pid1);
-        printf("pid2=%d\n", pid2);
-
-        //close(fd[0][0]);
-        //close(fd[0][1]);
-        waitpid(pid1, NULL, 0);
-        waitpid(pid2, NULL, 0);
-        close(fd[0]);
-        close(fd[1]);
-
-    }
-
-};
 
 // statement number (starting from 0), number of pipes (0 to num), make it recursive,
 // fork within the parent and setup all the piping first; then use the execve call at the end of setting up all the wiring.
@@ -293,24 +249,26 @@ void executePipe(char **argv[maxArgLen], int **fd, int index, int pipeCount) {
             close(fd[0][1]);
             close(fd[0][0]);
             executeP(argv[0], pid1);
-            //close(0);
-            perror("Invalid command");
+            //only reach if there is an error in the command
+            close(0);
+            printf("\nInvalid command... ah shit\n");
+
         } else if ((pid2 = fork()) == 0) {  //child2
             close(0);
             dup2(fd[0][0], 0);
             close(fd[0][0]);
             close(fd[0][1]);
+            waitpid((pid1 - 1), NULL, 0);
             executeP(argv[1], pid2);
-            //close(1);
-            perror("Invalid command");
+            //only reach if there is an error in the command
+            close(1);
+            printf("\nInvalid command2... ah shit\n");
 
         } else {    //parent execution closes the pipe
-            //close(fd[0][0]);
-            //close(fd[0][1]);
-            waitpid(pid1, NULL, 0);
-            waitpid(pid2, NULL, 0);
             close(fd[0][0]);
             close(fd[0][1]);
+            waitpid((pid1 - 1), NULL, 0);
+            waitpid((pid2 - 1), NULL, 0);
 
         }
 

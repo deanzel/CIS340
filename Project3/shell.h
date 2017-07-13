@@ -24,8 +24,6 @@ void executeP(char *argv[], pid_t pid);
 
 void handler(int signum);
 
-void execute1Pipe(char ***argv);
-
 void executePipe(char ***argv, int **fd, int index, int pipeCount);
 
 #endif //End SHELL_H

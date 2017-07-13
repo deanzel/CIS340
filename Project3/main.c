@@ -136,7 +136,8 @@ int main() {
             int fd[pipeCount][2];
             //execute1Pipe(argv);
 
-            executePipe(argv, fd, 0, pipeCount);
+            executePipe(argv, (int**) fd, 0, pipeCount);
+            //free(argv);
 
 
         } else {    //no pipes exist in the input, so just one set of command arguments
