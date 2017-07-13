@@ -241,7 +241,7 @@ void executePipe(char ***argv, int **fd, int index, int pipeCount) {
 
         //create the first pipe
         if (pipe(fd[0]) != 0) {
-            perror("Pipe cannot be opened...");
+            printf("\nPipe cannot be opened...\n");
             exit(1);
         }
         if ((pid1 = fork()) == 0) {     //child1
@@ -278,23 +278,23 @@ void executePipe(char ***argv, int **fd, int index, int pipeCount) {
 
         }
 
-    } else if (index == 0) {    //first process when more than 1 pipe present
+    } else if ((index == 0) && (pipeCount > 1)) {    //first process when more than 1 pipe present
         //create the first pipe
-        if (pipe(fd[0]) != 0) {
-            perror("Pipe cannot be opened...");
+        if (pipe(fd[index]) != 0) {
+            printf("\nPipe cannot be opened...\n");
             exit(1);
         }
         if ((pid = fork()) == 0) {      //child1
             int saved_stdout = dup(1);
             close(1);
-            dup2(fd[0][1], 1);
-            close(fd[0][1]);
-            close(fd[0][0]);
+            dup2(fd[index][1], 1);
+            close(fd[index][1]);
+            close(fd[index][0]);
             //recursive call to executePipe
             executePipe(argv, fd, index + 1, pipeCount);
 
-            //sleep for 200 milliseconds to let pipes get setup properly first
-            usleep(200000);
+            //sleep for 500 milliseconds to let pipes get setup properly first
+            usleep(500000);
             executeP(argv[0], pid);
             //only reach if there is an error in the command
             dup2(saved_stdout, 1);
@@ -303,15 +303,15 @@ void executePipe(char ***argv, int **fd, int index, int pipeCount) {
             printf("\nInvalid command in Process 1.\n");
 
         } else {        //close pipes in parent process
-            close(fd[0][0]);
-            close(fd[0][1]);
-
+            close(fd[index][0]);
+            close(fd[index][1]);
+            waitpid((pid - 1), NULL, 0);
         }
 
     } else if (index < pipeCount) {    //next process, but not the very end with no pipe
         //create next needed pipe
         if (pipe(fd[index]) != 0) {
-            perror("Pipe cannot be opened...");
+            printf("\nPipe cannot be opened...\n");
             exit(1);
         }
 
@@ -325,7 +325,7 @@ void executePipe(char ***argv, int **fd, int index, int pipeCount) {
             close(fd[index - 1][1]);
             //close stdout
             close(1);
-            //reroute output of child to read of newly created pipe[index]
+            //reroute output of child to read end of newly created pipe[index]
             dup2(fd[index][0], 1);
             close(fd[index][0]);
             //recursive call to executePipe
@@ -343,6 +343,7 @@ void executePipe(char ***argv, int **fd, int index, int pipeCount) {
         } else {        //close pipes in parent process
             close(fd[index][0]);
             close(fd[index][1]);
+            waitpid((pid - 1), NULL, 0);
         }
 
     } else {   //index = pipeCount; so this is the last process; don't create pipe, don't reroute its output, just need to connect its input

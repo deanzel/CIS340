@@ -23,11 +23,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="main.c" pinned="false" current-in-tab="true">
+      <file leaf-file-name="main.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1114">
-              <caret line="143" column="0" lean-forward="true" selection-start-line="143" selection-start-column="0" selection-end-line="143" selection-end-column="0" />
+            <state relative-caret-position="210">
+              <caret line="124" column="26" lean-forward="true" selection-start-line="124" selection-start-column="26" selection-end-line="124" selection-end-column="26" />
               <folding>
                 <element signature="e#185#203#0" expanded="true" />
               </folding>
@@ -35,11 +35,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="shell.c" pinned="false" current-in-tab="false">
+      <file leaf-file-name="shell.c" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/shell.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1972">
-              <caret line="347" column="12" lean-forward="true" selection-start-line="347" selection-start-column="12" selection-end-line="347" selection-end-column="12" />
+            <state relative-caret-position="-230">
+              <caret line="292" column="43" lean-forward="true" selection-start-line="292" selection-start-column="43" selection-end-line="292" selection-end-column="43" />
               <folding>
                 <element signature="e#36#54#0" expanded="true" />
               </folding>
@@ -68,8 +68,8 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/main.c" />
         <option value="$PROJECT_DIR$/shell.h" />
+        <option value="$PROJECT_DIR$/main.c" />
         <option value="$PROJECT_DIR$/shell.c" />
       </list>
     </option>
@@ -387,12 +387,12 @@
       <workItem from="1499220172780" duration="313000" />
       <workItem from="1499477430545" duration="7884000" />
       <workItem from="1499860706130" duration="12496000" />
-      <workItem from="1499877265667" duration="45147000" />
+      <workItem from="1499877265667" duration="47214000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="65840000" />
+    <option name="totallyTimeSpent" value="67907000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1856" y="23" width="1584" height="1367" extended-state="0" />
@@ -428,7 +428,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="12" />
+      <option name="time" value="13" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="CMakeRunConfiguration">
@@ -440,7 +440,9 @@
         <watch expression="argv[1][1]" language="ObjectiveC" />
         <watch expression="argv[0][2]" language="ObjectiveC" />
         <watch expression="argv[1][2]" language="ObjectiveC" />
-        <watch expression="argv[0][3]" language="ObjectiveC" />
+        <watch expression="argv[2]" language="ObjectiveC" />
+        <watch expression="argv[2][0]" language="ObjectiveC" />
+        <watch expression="argv[2][1]" language="ObjectiveC" />
       </configuration>
     </watches-manager>
   </component>
@@ -545,22 +547,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/shell.c">
+    <entry file="file://$PROJECT_DIR$/main.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1972">
-          <caret line="347" column="12" lean-forward="true" selection-start-line="347" selection-start-column="12" selection-end-line="347" selection-end-column="12" />
+        <state relative-caret-position="210">
+          <caret line="124" column="26" lean-forward="true" selection-start-line="124" selection-start-column="26" selection-end-line="124" selection-end-column="26" />
           <folding>
-            <element signature="e#36#54#0" expanded="true" />
+            <element signature="e#185#203#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.c">
+    <entry file="file://$PROJECT_DIR$/shell.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1114">
-          <caret line="143" column="0" lean-forward="true" selection-start-line="143" selection-start-column="0" selection-end-line="143" selection-end-column="0" />
+        <state relative-caret-position="-230">
+          <caret line="292" column="43" lean-forward="true" selection-start-line="292" selection-start-column="43" selection-end-line="292" selection-end-column="43" />
           <folding>
-            <element signature="e#185#203#0" expanded="true" />
+            <element signature="e#36#54#0" expanded="true" />
           </folding>
         </state>
       </provider>

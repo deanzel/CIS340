@@ -27,18 +27,19 @@ int main() {
     addPath("/usr/bin");
     cd("/Users/deanchoi");
 
-    /*int fd[1][2];
-    char *argv[2][3];
+    //int *fd[2];
+    /*char *argv[2][3];
     argv[0][0] = "ls";
     argv[0][1] = "-l";
     argv[0][2] = 0;
     argv[1][0] = "grep";
     argv[1][1] = "txt";
-    argv[1][2] = 0;
+    argv[1][2] = 0;*/
 
-    char argv[2][3][maxArgLen] = {
+    /*char argv[3][3][maxArgLen] = {
             {"ls", "-l", 0},
-            {"grep", "txt", 0}
+            {"grep", "txt", 0},
+            {"grep", "my", 0}
 
     };
 
@@ -55,9 +56,9 @@ int main() {
         printPrompt();
 
 
-        fgets(input, 4096, stdin);
-        input[strcspn(input, "\n")] = 0;    //gets rid of newline at end of input
-        //strcpy(input, "ls -l | grep txt");
+        //fgets(input, 4096, stdin);
+        //input[strcspn(input, "\n")] = 0;    //gets rid of newline at end of input
+        strcpy(input, "ls -l | grep txt | grep my");
         strcpy(inputCopy, input);
 
         char *ret;
@@ -133,11 +134,10 @@ int main() {
 
             //the char *argv[pipeCount + 1][argCount] has been fully processed and we can send it into the pipe execute method along with the pipeCount
             //and we'll statically allocate the memory for the filedescriptor 2d array
-            int fd[pipeCount][2];
-            //execute1Pipe(argv);
+            int *fd[pipeCount];
 
-            executePipe(argv, (int**) fd, 0, pipeCount);
-            //free(argv);
+            //executePipe(argv, (int**) fd, 0, pipeCount);
+            executePipe(argv, fd, 0, pipeCount);
 
 
         } else {    //no pipes exist in the input, so just one set of command arguments
