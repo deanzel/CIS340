@@ -26,6 +26,7 @@ int main() {
     addPath("/sbin");
 
 
+
     while (1) {
         char input[4096];
         char inputCopy[4096];
@@ -35,7 +36,6 @@ int main() {
 
 
 
-        //char command[100], arg[5][400];
 
 
         printPrompt();
@@ -79,10 +79,7 @@ int main() {
             //use inputCopy
             int inQuotes = 0;
 
-            char test[] = "ls -l";
-
             pch1 = strtok_r(inputCopy, "\"", &save_ptr1);
-            //pch1 = strtok_r(test, "\"", &save_ptr1);
 
             while (pch1 != NULL) {
                 if (inQuotes) {

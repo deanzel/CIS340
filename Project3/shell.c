@@ -127,18 +127,37 @@ void execute(char *argv[]) {
         char *token;
         char buffer[1024];
 
-        strcpy(pathString, pathEnv);
+        //if the first argument starts with ./ then run in current working directory first
+        if (!strncmp(argv[0], "./", 2)) {
+            char editedArg[100];
+            char fullCwd[1024];
+            strcpy(editedArg, &argv[0][2]);
+            strcpy(argv[0], editedArg);
 
-        token = strtok(pathString, ":");
-        while (token != NULL) {
-            strcpy(buffer, token);
-            strcat(buffer, "/");
-            strcat(buffer, argv[0]);
+            //printf("\neditedArg=%s\n", editedArg);
 
-            //execv will not return and execute the binary if it exists in that path folder; else it will continue
-            execv(buffer, argv);
-            token = strtok(NULL, ":");
-            buffer[0] = 0;
+            strcpy(fullCwd, cwd);
+            strcat(fullCwd, "/");
+            strcat(fullCwd, editedArg);
+            //printf("\nfullCwd=%s\n", fullCwd);
+
+            execv(fullCwd, argv);
+            printf("\nbitching\n");
+        } else {    //all other cases, then try to run binary in all the various path folders
+
+            strcpy(pathString, pathEnv);
+
+            token = strtok(pathString, ":");
+            while (token != NULL) {
+                strcpy(buffer, token);
+                strcat(buffer, "/");
+                strcat(buffer, argv[0]);
+
+                //execv will not return and execute the binary if it exists in that path folder; else it will continue
+                execv(buffer, argv);
+                token = strtok(NULL, ":");
+                buffer[0] = 0;
+            }
         }
 
         printf("\nThat is an invalid command...\n");
