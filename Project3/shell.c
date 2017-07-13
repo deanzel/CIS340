@@ -230,16 +230,14 @@ void handler(int signum) {
 //should take in the triple string array of all the inputs, filedescriptor 2d array for each of the created pipes fd[i][2], index of which pipe/statement we are at, total number of pipes
 // recursive call if index < pipeCount; we have a universal filedescriptor 2d array; also each process will wait for the previous to terminate before executing its set of commands
 
-void executePipe(char **argv[maxArgLen], int **fd, int index, int pipeCount) {
-    pid_t pid1, pid2;
+void executePipe(char ***argv, int **fd, int index, int pipeCount) {
+    pid_t pid, pid1, pid2;
 
     //set it up for one pipe at first; so only fd[0][2], pipeCount = 1, and *argv[2][]
 
     //for the very first cmd set, keep stdin at 0 but redirect output to pipe
     //case if we only have 1 pipe, then don't need recursive call
     if ((index == 0) && (pipeCount == 1)) {
-        char error[50];
-        error[0] = 0;
 
         //create the first pipe
         if (pipe(fd[0]) != 0) {
@@ -280,41 +278,89 @@ void executePipe(char **argv[maxArgLen], int **fd, int index, int pipeCount) {
 
         }
 
-    } else if (index < pipeCount) {    //next
+    } else if (index == 0) {    //first process when more than 1 pipe present
+        //create the first pipe
+        if (pipe(fd[0]) != 0) {
+            perror("Pipe cannot be opened...");
+            exit(1);
+        }
+        if ((pid = fork()) == 0) {      //child1
+            int saved_stdout = dup(1);
+            close(1);
+            dup2(fd[0][1], 1);
+            close(fd[0][1]);
+            close(fd[0][0]);
+            //recursive call to executePipe
+            executePipe(argv, fd, index + 1, pipeCount);
+
+            //sleep for 200 milliseconds to let pipes get setup properly first
+            usleep(200000);
+            executeP(argv[0], pid);
+            //only reach if there is an error in the command
+            dup2(saved_stdout, 1);
+            close(saved_stdout);
+            //the stdout is re-established to the monitor
+            printf("\nInvalid command in Process 1.\n");
+
+        } else {        //close pipes in parent process
+            close(fd[0][0]);
+            close(fd[0][1]);
+
+        }
+
+    } else if (index < pipeCount) {    //next process, but not the very end with no pipe
         //create next needed pipe
         if (pipe(fd[index]) != 0) {
             perror("Pipe cannot be opened...");
             exit(1);
         }
 
-        if ((pid1 = fork()) == 0) {     //child
+        if ((pid = fork()) == 0) {     //child1
             //close stdin
+            //save stdout for error reporting if the executeP() call fails
+            int saved_stdout = dup(1);
             close(0);
             //reroute input of child to write end of previous pipe[index - 1]
-            dup(fd[index - 1][1]);
+            dup2(fd[index - 1][1], 0);
             close(fd[index - 1][1]);
             //close stdout
             close(1);
             //reroute output of child to read of newly created pipe[index]
-            dup(fd[index][0]);
+            dup2(fd[index][0], 1);
             close(fd[index][0]);
-            //executePipe(***argv, **fd, index + 1, pipeCount);
+            //recursive call to executePipe
+            executePipe(argv, fd, index + 1, pipeCount);
 
-        }//else here would be parent execution
+            //sleep for 200 milliseconds to let pipes get setup properly first
+            usleep(200000);
+            executeP(argv[index], pid);
+            //only reach if there is an error in the command
+            dup2(saved_stdout, 1);
+            close(saved_stdout);
+            //the stdout is re-established to the monitor
+            printf("\nInvalid command in Process %d.\n", index + 1);
 
-    } else {    //index = pipeCount; so last process; don't create pipe and no need to reroute its output, just need to connect its input
-        if ((pid1 = fork()) == 0) {     //child
+        } else {        //close pipes in parent process
+            close(fd[index][0]);
+            close(fd[index][1]);
+        }
+
+    } else {   //index = pipeCount; so this is the last process; don't create pipe, don't reroute its output, just need to connect its input
+        if ((pid = fork()) == 0) {     //final child
             close(0);
-            dup(fd[index - 1][0]);
+            dup2(fd[index - 1][0], 1);
             close(fd[index - 1][0]);
             close(fd[index - 1][1]);
 
+            //sleep for 100 milliseconds to let data start being transferred via each pipe
+            usleep(100000);
+            executeP(argv[index], pid);
+            //if error, automatically printed from the executeP() method
+        } else {    //parent process; its pipes were closed in the previous iteration
+            //Wait for the last process to finish before exiting back
+            waitpid((pid - 1), NULL, 0);
         }
-
-
     }
-
-
 
 };
 
