@@ -13,6 +13,8 @@
 
 char cwd[1024];
 char pathEnv[1024];
+int maxArgs = 15;
+int maxArgLen = 100;
 
 int main() {
     printf("\nWeclome to Dean Choi's customized Linux shell.\n");
@@ -22,10 +24,6 @@ int main() {
 
     addPath("/bin");
     addPath("/sbin");
-    //remPath("/Users");
-    //path();
-    char *argv[] = {"ls", "-l", 0};
-    execute(argv);
 
 
     while (1) {
@@ -37,13 +35,15 @@ int main() {
 
 
 
-        char command[100], arg[5][400];
+        //char command[100], arg[5][400];
 
 
         printPrompt();
 
 
         fgets(input, 4096, stdin);
+        input[strcspn(input, "\n")] = 0;
+        //strcpy(input, "ls -l");
         strcpy(inputCopy, input);
 
         if (strstr(inputCopy, " | ") != NULL){  //pipes exist in the large input
@@ -67,59 +67,88 @@ int main() {
 
         } else {
             //no pipes exist in the input, so just one "command"
+            //bug: we can only handle up to 15 arguments in each command line
 
             //tokenize multiple strings at once for possibility of double quotes enclosed string with a space
-            token = strtok(inputCopy, " \t\v\n");
+            //for now just statically declare argv[]
+            //char argv[15][100];
+            char **argv;
 
-            while (count < 5 && token != NULL) {
-                if (count == 0) {
-                    strcpy(command, token);
-                    count++;
-                } else {
-                    strcpy(arg[count - 1], token);
-                    count++;
+            argv = malloc(maxArgs * sizeof(char*));
+            int argCount = 0;
+
+            //tokenize an input string while not splitting on a space within two double quotes
+            char *pch1, *pch2, *save_ptr1, *save_ptr2;
+            //use inputCopy
+            int inQuotes = 0;
+
+            char test[] = "ls -l";
+
+            pch1 = strtok_r(inputCopy, "\"", &save_ptr1);
+            //pch1 = strtok_r(test, "\"", &save_ptr1);
+
+            while (pch1 != NULL) {
+                if(inQuotes) {
+                    argv[argCount] = malloc((maxArgLen + 1) * sizeof(char));
+                    strcpy(argv[argCount], pch1);
+                    pch1 = strtok_r(NULL, "\"", &save_ptr1);
+                    inQuotes = 0;
+                    argCount++;
+                    continue;
                 }
+                pch2 = strtok_r(pch1, " ", &save_ptr2);
+                while (pch2 != NULL) {
+                    argv[argCount] = malloc((maxArgLen + 1) * sizeof(char));
+                    strcpy(argv[argCount], pch2);
+                    pch2 = strtok_r(NULL, " ", &save_ptr2);
+                    argCount++;
+                }
+                pch1 = strtok_r(NULL, "\"", &save_ptr1);
+                inQuotes = 1;
 
-                token = strtok(NULL, " \t\n\v");
-            };
+            }
+            argv[argCount] = 0;
+
+
+
 
             //Single Argument commands
-            if (count == 1) {
-                if (!strcmp("quit", command)) {
+            if (argCount == 1) {
+                if (!strcmp("quit", argv[0])) {
                     printf("\nQuitting the shell program...\n");
                     break;
-                } else if (!strcmp("path", command)) {
+                } else if (!strcmp("path", argv[0])) {
                     printPath();
-                } else if (!strcmp("cd", command)) {
+                } else if (!strcmp("cd", argv[0])) {
                     cd("/");
-                } else if (!strcmp("ls", command)){
-                    //execute();
                 }
                 else {
-                    printf("\nError. Invalid command.\n");
+                    execute(argv);
                 }
             }
                 //Two Argument commands
-            else if (count == 2) {
-                if (!strcmp("cd", command)) {
-                    cd(arg[0]);
+            else if (argCount == 2) {
+                if (!strcmp("cd", argv[0])) {
+                    cd(argv[1]);
                 } else {
-                    printf("\nError. Invalid command.\n");
+                    execute(argv);
                 }
-            } else if (count == 3) {
-                if (!strcmp("path", command) && !strcmp("+", arg[0])) {
-                    addPath(arg[1]);
-                } else if (!strcmp("path", command) && !strcmp("-", arg[0])) {
-                    remPath(arg[1]);
+            } else if (argCount == 3) {
+                if (!strcmp("path", argv[0]) && !strcmp("+", argv[1])) {
+                    addPath(argv[2]);
+                } else if (!strcmp("path", argv[0]) && !strcmp("-", argv[1])) {
+                    remPath(argv[2]);
+                } else {
+                    execute(argv);
                 }
             } else {
-                printf("\nError. Invalid command.\n");
+                execute(argv);
             }
 
 
         }
         }
-    
+
 
 
     return 0;

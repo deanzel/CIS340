@@ -9,7 +9,7 @@
 #include <string.h>
 #include "shell.h"
 
-//global variable of pathname from main.c
+//global variable of cwd and pathEnv from main.c
 extern char cwd[1024];
 extern char pathEnv[1024];
 
@@ -117,12 +117,7 @@ void remPath(char *path) {
 
 
 // int execv(const char *path, char *const argv[]);
-/*int execv(const char *path, char *const argv[]);
-int execve(const char *filename, char *const argv[], char *const envp[]);*/
-
-//execute function that takes in the the char* arg[][] pointer, statement number (starting from 0), number of pipes (0 to num)
-//make it recursive
-//fork within the parent and setup all the piping first; then use the execve call at the end of setting up all the wiring.
+//execute function that takes in the the char* arg[] pointer array; only for 0 pipes
 
 void execute(char *argv[]) {
     pid = fork();
@@ -146,7 +141,8 @@ void execute(char *argv[]) {
             buffer[0] = 0;
         }
 
-        printf("\nThat is an incorrect command...\n");
+        printf("\nThat is an invalid command...\n");
+        exit(1);
 
     } else {    //parent
         //sleep for 100 milliseconds
@@ -156,3 +152,6 @@ void execute(char *argv[]) {
 };
 
 
+// statement number (starting from 0), number of pipes (0 to num), make it recursive,
+// fork within the parent and setup all the piping first; then use the execve call at the end of setting up all the wiring.
+//executePipe()
