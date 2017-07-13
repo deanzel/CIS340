@@ -18,7 +18,9 @@ void addPath(char *path);
 
 void remPath(char *path);
 
-
 void execute(char *argv[]);
+
+
+void executePipe(char **argv[], int *fd[], int index, int pipeCount);
 
 #endif //End SHELL_H

@@ -71,9 +71,10 @@ int main() {
                 inputStrIndex++;
             }
             //Now, we will parse each input cmd line (that is its own pipe cmd) into individual argv[]
-            //char **argv[pipeCount + 1];
-            char ***argv;
-            argv = malloc((pipeCount + 1) * sizeof(int *));
+            //not sure what data type of argv will work until we test it later
+            char **argv[pipeCount + 1];
+            //char ***argv;
+            //argv = malloc((pipeCount + 1) * sizeof(int *));
 
             //for each input string we have separated, create into argv[i][]
             int i;

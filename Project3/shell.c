@@ -172,7 +172,66 @@ void execute(char *argv[]) {
 // fork within the parent and setup all the piping first; then use the execve call at the end of setting up all the wiring.
 //should take in the triple string array of all the inputs, filedescriptor 2d array for each of the created pipes fd[i][2], index of which pipe/statement we are at, total number of pipes
 // recursive call if index < pipeCount; we have a universal filedescriptor 2d array; also each process will wait for the previous to terminate before executing its set of commands
-//ret? executePipe(char *argv[][], int *fd[], int index, int pipeCount)
+
+void executePipe(char **argv[], int *fd[], int index, int pipeCount) {
+    pid_t pid1, pid2;
+
+    //set it up for one pipe at first; so only fd[0][2], pipeCount = 1, and *argv[2][]
+
+    //for the very first cmd set, keep stdin at 0 but redirect output to pipe
+    if (index == 0) {
+        //create the first pipe
+        if (pipe(fd[0]) != 0) {
+            perror("Pipe cannot be opened...");
+            exit(1);
+        }
+        if ((pid1 = fork()) == 0) {     //child
+            close(1);
+            dup(fd[0][1]);
+            close(fd[0][1]);
+            close(fd[0][0]);
+            executePipe(***argv, **fd, index + 1, pipeCount);
+        }
+        //else would be a parent execution
+
+    } else if (index < pipeCount) {    //next
+        //create next needed pipe
+        if (pipe(fd[index]) != 0) {
+            perror("Pipe cannot be opened...");
+            exit(1);
+        }
+
+        if ((pid1 = fork()) == 0) {     //child
+            //close stdin
+            close(0);
+            //reroute input of child to write end of previous pipe[index - 1]
+            dup(fd[index - 1][1]);
+            close(fd[index - 1][1]);
+            //close stdout
+            close(1);
+            //reroute output of child to read of newly created pipe[index]
+            dup(fd[index][0]);
+            close(fd[index][0]);
+            executePipe(***argv, **fd, index + 1, pipeCount);
+
+        }//else here would be parent execution
+
+    } else {    //index = pipeCount; so last process; don't create pipe and no need to reroute its output, just need to connect its input
+        if ((pid1 = fork()) == 0) {     //child
+            close(0);
+            dup(fd[index - 1][0]);
+            close(fd[index - 1][0]);
+            close(fd[index - 1][1]);
+
+        }
+
+
+    }
+
+
+
+};
+
 
 
 
