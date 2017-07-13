@@ -134,10 +134,14 @@ int main() {
 
             //the char *argv[pipeCount + 1][argCount] has been fully processed and we can send it into the pipe execute method along with the pipeCount
             //and we'll statically allocate the memory for the filedescriptor 2d array
-            int *fd[pipeCount];
+            if (pipeCount > 0) {
+                int fd[pipeCount][2];
+                //int fd[2][2] = {0};
+                //memset(fd, 0, sizeof(fd));
 
-            //executePipe(argv, (int**) fd, 0, pipeCount);
-            executePipe(argv, fd, 0, pipeCount);
+                //executePipe(argv, (int**) fd, 0, pipeCount);
+                executePipe(argv, fd, 0, pipeCount);
+            }
 
 
         } else {    //no pipes exist in the input, so just one set of command arguments
