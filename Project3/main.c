@@ -17,7 +17,7 @@ int maxArgs = 15;   //maximum number of Arguments per
 int maxArgLen = 100;
 
 int main() {
-    printf("\nWeclome to Dean Choi's customized Linux shell.\n");
+    printf("\nWelcome to Dean Choi's customized Linux shell.\n");
 
     getcwd(cwd, 1024);
     pathEnv[0] = 0;
@@ -30,12 +30,8 @@ int main() {
     while (1) {
         char input[4096];
         char inputCopy[4096];
-        char *token;
-        int count = 0;
+        //char *token;
         int pipeCount = 0;
-
-
-
 
 
         printPrompt();
@@ -45,40 +41,56 @@ int main() {
         input[strcspn(input, "\n")] = 0;    //gets rid of newline at end of input
         strcpy(inputCopy, input);
 
-        if (strstr(inputCopy, " | ") != NULL) {  //pipes exist in the large input
-            //manage the number of pipes and parse them; figure this out later
-            //split pipes and replace the | with \a (bell escape character which is non-printing)
+        char *ret;
 
+        if ((ret = strstr(inputCopy, " | ")) != NULL) {  //pipes exist in the large total input
 
-            while (strstr(inputCopy, " | ") != NULL) {
-                //inputCopy[3] = (char) 28;
+            //manage the number of pipes and parse the cmd lines; split pipes and replace the '|' with \a (bell escape character which is non-printing)
+            //get the total count of pipes and replace the '|' char within a " | " pattern with '\a'
+            while (ret != NULL) {
+                pipeCount++;
+                ret[1] = '\a';
 
-                // char *delimeter[] = {(char) 28, 0};
-                //can replace middle char of '|' with \a for alert bell (non-printed char)
-                //then when we run it,
-
-
-
+                ret = strstr(inputCopy, " | ");
             }
+            //split into arrays of long input strings delimited by the now '\a' char
+            int inputStrIndex = 0;
+            char **inputStr;
+            //1 pipe = 2 cmd lines; 2 pipes = 3 cmd lines; 3 pipes = 4 cmd lines...
+            inputStr = malloc((pipeCount + 1) * sizeof(char *));
+
+            char *token, *save_ptr;
+            token = strtok_r(inputCopy, "\a", &save_ptr);
+
+            //split on '\a' and we'll have extra white spaces, but that will be taken care of in next set of parsing
+            while (token != NULL) {
+                inputStr[inputStrIndex] = malloc((strlen(token) + 1) * sizeof(char));
+                strcpy(inputStr[inputStrIndex], token);
+
+                token = strtok_r(NULL, "\a", &save_ptr);
+                inputStrIndex++;
+            }
+            //*intputStr[] is a
 
 
-        } else {
-            //no pipes exist in the input, so just one set of command arguments
-            //limitation: we can only handle up to 15 arguments in each command line (could increase though since we use malloc)
 
-            //tokenize multiple strings at once for possibility of double quotes enclosed string with a space
-            //for now just statically declare argv[]
-            //char argv[15][100];
+
+        } else {    //no pipes exist in the input, so just one set of command arguments
+
+            //limitation: we can only handle up to 15 arguments in each command line (could manually increase though since we use malloc)
+            //and each argument size has a limit of 99 characters (this can be manually increased as well in the global variables)
+
+            //dynamically declare char *argv[] in order to minimize some resources
             char **argv;
-
             argv = malloc(maxArgs * sizeof(char *));
             int argCount = 0;
 
-            //tokenize an input string while not splitting on a space within two double quotes
+            //Using strtok_r, we will split on blank spaces as long as they are not within two surrounding double quotes
+            //tokenize an input string while not splitting on a space within two surrounding double quotes
             char *pch1, *pch2, *save_ptr1, *save_ptr2;
-            //use inputCopy
-            int inQuotes = 0;
+            int inQuotes = 0;   //boolean for if the token is currently within a pair of double quotes
 
+            //split first on the \" because that is the main thing to look for
             pch1 = strtok_r(inputCopy, "\"", &save_ptr1);
 
             while (pch1 != NULL) {

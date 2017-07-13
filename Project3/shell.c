@@ -134,12 +134,9 @@ void execute(char *argv[]) {
             strcpy(editedArg, &argv[0][2]);
             strcpy(argv[0], editedArg);
 
-            //printf("\neditedArg=%s\n", editedArg);
-
             strcpy(fullCwd, cwd);
             strcat(fullCwd, "/");
             strcat(fullCwd, editedArg);
-            //printf("\nfullCwd=%s\n", fullCwd);
 
             execv(fullCwd, argv);
             printf("\nbitching\n");
@@ -173,4 +170,6 @@ void execute(char *argv[]) {
 
 // statement number (starting from 0), number of pipes (0 to num), make it recursive,
 // fork within the parent and setup all the piping first; then use the execve call at the end of setting up all the wiring.
-//executePipe()
+//should take in the triple string array of all the inputs, filedescriptor 2d array for each of the created pipes fd[i][2], index of which pipe/statement we are at, total number of pipes
+// recursive call if index < pipeCount; we have a universal filedescriptor 2d array; also each process will wait for the previous to terminate before executing its set of commands
+//ret? executePipe(char *argv[][], int *fd[], int index, int pipeCount)
