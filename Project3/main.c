@@ -70,7 +70,52 @@ int main() {
                 token = strtok_r(NULL, "\a", &save_ptr);
                 inputStrIndex++;
             }
-            //*intputStr[] is a
+            //Now, we will parse each input cmd line (that is its own pipe cmd) into individual argv[]
+            //char **argv[pipeCount + 1];
+            char ***argv;
+            argv = malloc((pipeCount + 1) * sizeof(int *));
+
+            //for each input string we have separated, create into argv[i][]
+            int i;
+            for (i = 0; i < pipeCount + 1; i++) {
+                argv[i] = malloc(maxArgs * sizeof(char *));
+                int argCount = 0;
+
+                //Use same strtok_r parsing method from below that will split on blank spaces unless they are enclosed in two surround double quotes
+                char *pch1, *pch2, *save_ptr1, *save_ptr2;
+                int inQuotes = 0;
+
+                pch1 = strtok_r(inputStr[i], "\"", &save_ptr1);
+
+                while (pch1 != NULL) {
+                    if (inQuotes) {
+                        argv[i][argCount] = malloc((maxArgLen + 1) * sizeof(char));
+                        strcpy(argv[i][argCount], pch1);
+                        pch1 = strtok_r(NULL, "\"", &save_ptr1);
+                        inQuotes = 0;
+                        argCount++;
+                        continue;
+                    }
+                    pch2 = strtok_r(pch1, " ", &save_ptr2);
+                    while (pch2 != NULL) {
+                        argv[i][argCount] = malloc((maxArgLen + 1) * sizeof(char));
+                        strcpy(argv[i][argCount], pch2);
+                        pch2 = strtok_r(NULL, " ", &save_ptr2);
+                        argCount++;
+                    }
+                    pch1 = strtok_r(NULL, "\"", &save_ptr1);
+                    inQuotes = 1;
+
+                }
+                argv[i][argCount] = 0;
+
+            }
+
+            //the char *argv[pipeCount + 1][argCount] has been fully processed and we can send it into the pipe execute method along with the pipeCount
+            //and we'll statically allocate the memory for the filedescriptor 2d array
+            int fd[pipeCount][2];
+
+            //executePipe(argv, fd, 0, pipeCount);
 
 
 
@@ -94,6 +139,7 @@ int main() {
             pch1 = strtok_r(inputCopy, "\"", &save_ptr1);
 
             while (pch1 != NULL) {
+                //if the first surrounding double quote as been found and delimited...
                 if (inQuotes) {
                     argv[argCount] = malloc((maxArgLen + 1) * sizeof(char));
                     strcpy(argv[argCount], pch1);
@@ -102,6 +148,7 @@ int main() {
                     argCount++;
                     continue;
                 }
+                //else process/delimit the blank spaces normally within the second token pointer
                 pch2 = strtok_r(pch1, " ", &save_ptr2);
                 while (pch2 != NULL) {
                     argv[argCount] = malloc((maxArgLen + 1) * sizeof(char));
@@ -109,12 +156,12 @@ int main() {
                     pch2 = strtok_r(NULL, " ", &save_ptr2);
                     argCount++;
                 }
+                //if a double quote is encountered, set inQuote to true, delimit at that double quote, and use the first token pointer
                 pch1 = strtok_r(NULL, "\"", &save_ptr1);
                 inQuotes = 1;
 
             }
             argv[argCount] = 0;
-
 
 
 

@@ -173,3 +173,6 @@ void execute(char *argv[]) {
 //should take in the triple string array of all the inputs, filedescriptor 2d array for each of the created pipes fd[i][2], index of which pipe/statement we are at, total number of pipes
 // recursive call if index < pipeCount; we have a universal filedescriptor 2d array; also each process will wait for the previous to terminate before executing its set of commands
 //ret? executePipe(char *argv[][], int *fd[], int index, int pipeCount)
+
+
+
