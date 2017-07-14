@@ -1,10 +1,10 @@
 Dean Choi
 CSU# 2690159
-CIS 340 - Project 3
+CIS 340 - Project 3 - A Customized Shell
 
 ============================================================================
 *Project Description:
-This C console program allows acts as a customized shell that supports Linux shell commands in addition to the internal commands.
+This C console program allows acts as a customized shell that supports Linux shell commands in addition to the internal commands based upon our own determined PATH environment variable.
 
 ============================================================================
 *Compiling Instructions:
@@ -38,9 +38,9 @@ If the Makefile is not present, you can compile the executable via gcc in Termin
 
 9). cmd1 | cmd2 | cmd3 | …. | cmdn  :  pipes together a series of n commands with the appropriate I/O redirection. Support for “infinite” pipes has been implemented only limited by the input char restriction of 4096 characters. For example, “ls -l | grep txt | wc - c”.
 
-10). cmd1 > filename  :  Output redirection where the output of cmd1 is saved to the text file of filename.txt.
+10). cmd1 > filename  :  Output redirection where the output of cmd1 is saved to the text file of filename.txt. For example, “ls -l > DeanText” saves the output of “ls -l” in the current directory to a text file named “DeanText.txt” in the same current directory.
 
-11). cmd1 < myfile  :  Input redirection where the text data in the myfile.txt text file is redirected into the input of cmd1.
+11). cmd1 < myfile  :  Input redirection where the text data in the myfile.txt text file is redirected into the input of cmd1. For example, “grep txt < DeanText” will input the previously saved “ls -l” text output into the “grep txt” string search command.
 
 
 **Instructions on how to use other Linux commands:
@@ -117,6 +117,18 @@ dechoi$ ls -l | grep pdf
 -rw-r--r-- 1 dechoi users  181202 Jul 12 19:33 device.pdf
 -rw-r--r-- 1 dechoi users 3457732 Jun 16 16:14 fat12.pdf
 
+dechoi$ ls -l > DeanText
+
+dechoi$ ls
+
+CIS 265 HW      Desktop     examples.desktop  july19.jpg     Public
+cuda-workspace  device.pdf  fat12.pdf         Music          Templates
+DeanText.txt    Documents   jul20.jpg         Pictures       Videos
+dechoi          Downloads   july18.jpg        project2.html
+
+dechoi$ grep txt < DeanText
+-rw-r--r-- 1 dechoi users       0 Jul 13 08:49 DeanText.txt
+
 dechoi$ quit
 
 Quitting the shell program...
@@ -127,5 +139,5 @@ Quitting the shell program...
 1). You cannot have a argument or string sequence of “ | “ outside of your pipe declarations. However, with the parsing/splitting method implemented, you are allowed to have the ‘|’ character in any of your arguments.
 2). Input is limited to 4096 characters.
 3). Current maximum number of arguments within a single command (within a pipe) is set at 15 with each having a maximum length of 99. However, this is hardcoded in and dynamically allocated, so it is very easy to change.
-4). Current pipe commands beyond 1 total pipe has a bug at the moment. It almost works, but there may be a small error somewhere in the piping or execution sequence. Will fix soon.
-5). Input and Output redirection has not been completely implemented yet. Will do soon.
+4). Current pipe commands beyond 1 total pipe has a bug at the moment. I created an method that can parse and process an “infinite” number of pipes, but there seems to be a tiny bug somewhere in the piping/wiring somewhere. Almost have it finished.
+5). Input and Output redirection has been completed and implemented individually and in addition to pipe system calls. You can see the output samples above.

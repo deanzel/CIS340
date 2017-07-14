@@ -13,8 +13,7 @@
 extern char cwd[1024];
 extern char pathEnv[1024];
 extern int maxArgLen;
-static pid_t pidFinal;
-int pid;
+pid_t pid;
 
 //Print the shell prompt which includes the current folder name followed by '$'
 void printPrompt(){
@@ -26,7 +25,6 @@ void printPrompt(){
     printf("\n%s$ ", &folder[1]);
 
 };
-
 
 
 //change directory command; what if path has a space somewhere in it? Process it if the path comes wrapped in quotes
@@ -221,9 +219,10 @@ void executeP(char *argv[], pid_t pid) {
 //within every child, close all the unneeded pipes; then close all the pipes in the parent; then execute each statement one-by-one in each child
 void executePipe(char ***argv, int* fd[], int pipeCount) {
     pid_t pid, pid1, pid2;
-    //static pid_t pidFinal;
-    //locally handle any SIGPIPE errors
     signal(SIGPIPE, SIG_IGN);
+
+    //Array that saves pids of each child process for the parent
+    pid_t *childId = malloc((pipeCount + 1) * sizeof(pid_t));
 
     //set it up for one pipe at first; so only fd[0][2], pipeCount = 1, and *argv[2][]
 
@@ -300,6 +299,8 @@ void executePipe(char ***argv, int* fd[], int pipeCount) {
                             close(fd[j][1]);
                         }
                     }
+                    //save its own processID in the array
+                    childId[i] = getpid();
 
                 } else if (0 < i < pipeCount) {     //all middle children processes; not the end
                     saved_stdout[i] = dup(1);
@@ -324,8 +325,10 @@ void executePipe(char ***argv, int* fd[], int pipeCount) {
                         }
                     }
 
+                    //save its own processID in the array
+                    childId[i] = getpid();
+
                 } else {    //last child process when i = pipeCount
-                    pidFinal = getpid();
                     //dont need to save stdout because it remains tied to the monitor
                     close(0);
                     //reroute stdin input of final child to read end of last pipe[i - 1]
@@ -340,28 +343,112 @@ void executePipe(char ***argv, int* fd[], int pipeCount) {
                             close(fd[j][1]);
                     }
 
+                    //save its own processID in the array
+                    childId[i] = getpid();
                 }
 
-                executeP(argv[i], pid);
+                /*executeP(argv[i], pid);
                 //this is reached if there is an error running the command
                 dup2(saved_stdout[i], 1);
                 close(saved_stdout[i]);
                 //the stdout is re-established to the monitor
                 printf("\nInvalid command in Process %d.\n", i + 1);
-                exit(1);
+                exit(1);*/
 
             } else {    //parent process
-                //close all pipes
-                int k;
-                for (k = 0; k < pipeCount; k++) {
+                //save the currently created child's process id in the array
+                childId[i] = pid;
+                //close all finished pipes in the parent process depending on index of child process
+                //start at index of at least 2, close all pipes below pipe[1]
+                /*int k;
+                for (k = 0; k < i; k++) {
                     close(fd[k][0]);
                     close(fd[k][1]);
-                }
-                usleep(500000);
-                //waitpid(pidFinal, NULL, 0);
+                }*/
+
             }
         }
+        //close all other pipes only in the parent process
+        if (pid != 0) {
+            int k;
+            for (k = 0; k < pipeCount; k++){
+                close(fd[k][0]);
+                close(fd[k][1]);
+            }
+        } else {
+            usleep(100000);     //pause the child momentarily
+        }
+
+        //only fully filled out in the parent process...
+        //executeP in each child process according to the child id after pipes are all set up!!
+        for (i = 0; i < pipeCount + 1; i++) {
+            if (getpid() == childId[i]) {
+                executeP(argv[i], 0);
+                //only reach if error
+                dup2(saved_stdout[i], 1);
+                close(saved_stdout[i]);
+                //the stdout is re-established to the monitor
+                printf("\nInvalid command in Process %d.\n", i + 1);
+                exit(1);
+            }
+        }
+
+        waitpid(pid, NULL, 0);
     }
 
 };
+
+
+//output redirection to a file where no other pipes are involved
+void outputRedirect(char *argv[], char *filename) {
+    pid_t pid;
+
+    char textFile[1024];
+    strcpy(textFile, filename);
+    strcat(textFile, ".txt");
+    int fdo = open(textFile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (fdo < 0) {
+        printf("An error occurred in trying to open/create the text file of '%s'", textFile);
+    } else {
+
+        if ((pid = fork()) == 0) {  //child execution
+            close(1);
+            dup2(fdo, 1);
+            close(fdo);
+            executeP(argv,
+                     pid);  //executeP() method will search through all the Path variable directories and print error as well
+            exit(1);
+        } else {    //parent
+            close(fdo);
+            waitpid(pid, NULL, 0);
+        }
+    }
+};
+
+
+//input redirection from a file where no other pipes are involved
+void inputRedirect(char *argv[], char *filename) {
+    pid_t pid;
+
+    char textFile[1024];
+    strcpy(textFile, filename);
+    strcat(textFile, ".txt");
+    int fdo = open(textFile, O_RDONLY);
+
+    if (fdo < 0) {
+        printf("An error occurred in trying read the text file of '%s'", textFile);
+    } else {
+        if ((pid = fork()) == 0) {  //child execution
+            close(0);
+            dup2(fdo, 0);
+            close(fdo);
+            executeP(argv, pid);  //executeP() method will search through all the Path variable directories and print error as well
+            exit(1);
+        } else {    //parent
+            close(fdo);
+            waitpid(pid, NULL, 0);
+        }
+    }
+};
+
 

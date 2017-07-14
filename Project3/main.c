@@ -7,8 +7,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <fcntl.h>
 #include <string.h>
+#include <fcntl.h>
 #include "shell.h"
 
 char cwd[1024];
@@ -16,7 +16,6 @@ char pathEnv[1024];
 int maxArgs = 15;   //maximum number of Arguments per
 int maxArgLen = 100;
 
-//static pid_t pidFinal = 0;
 
 int main() {
     printf("\nWelcome to Dean Choi's customized Linux shell.\n");
@@ -24,12 +23,11 @@ int main() {
     getcwd(cwd, 1024);
     pathEnv[0] = 0;
 
-
-
     addPath("/bin");
     addPath("/sbin");
     addPath("/usr/bin");
     cd("/Users/deanchoi");
+
 
     while (1) {
         char input[4096];
@@ -39,9 +37,10 @@ int main() {
         printPrompt();
 
 
-        fgets(input, 4096, stdin);
-        input[strcspn(input, "\n")] = 0;    //gets rid of newline at end of input
-        //strcpy(input, "ls -l | grep txt | grep my");
+        //fgets(input, 4096, stdin);
+        //input[strcspn(input, "\n")] = 0;    //gets rid of newline at end of input
+        strcpy(input, "ls -l | grep -i txt | wc -c | grep 13 | grep 132");
+        //strcpy(input, "ls -l | grep -i txt | wc -c");
         strcpy(inputCopy, input);
 
         char *ret;
@@ -133,9 +132,9 @@ int main() {
                 free(fd);
                 free(argv);
             }
+        }
 
-
-        } else if ((ret = strstr(inputCopy, " < ")) != NULL) {      //input redirection from a file exists w/ no pipes
+        else if ((ret = strstr(inputCopy, " < ")) != NULL) {      //input redirection from a file exists w/ no pipes
             //get the number of " < " and parse the cmd lines; split replace the '<' with \a (bell escape character which is non-printing)
             //we can only have one input redirection here, so if there are somehow 2 or more, " < " occurrences, we'll return an error
             int irCount = 0;
@@ -149,26 +148,111 @@ int main() {
                 printf("\nThat is an invalid command...\n");
 
             } else {
-                //split into arrays of long input strings delimited by the now '\a' char
+                //split into 2 char pointer arrays of the long input strings delimited by the now '\a' char
                 int inputStrIndex = 0;
-                char **inputStr;
-                //1 pipe = 2 cmd lines; 2 pipes = 3 cmd lines; 3 pipes = 4 cmd lines...
-                inputStr = malloc((pipeCount + 1) * sizeof(char *));
+                char initialInput[1024];
+                char inputFile[1024];
 
                 char *token, *save_ptr;
                 token = strtok_r(inputCopy, "\a", &save_ptr);
 
-                //split on '\a' and we'll have extra white spaces, but that will be taken care of in next set of parsing
+                //split on '\a' and we'll have extra white spaces, but that will be taken care of in next set of parsing; should only bring back 2 strings tokens
                 while (token != NULL) {
-                    inputStr[inputStrIndex] = malloc((strlen(token) + 1) * sizeof(char));
-                    strcpy(inputStr[inputStrIndex], token);
+                    if (inputStrIndex == 0) {
+                        strcpy(initialInput, token);
+                    } else {
+                        strcpy(inputFile, token);
+                    }
 
                     token = strtok_r(NULL, "\a", &save_ptr);
                     inputStrIndex++;
                 }
-            }
 
-        } else if ((ret = strstr(inputCopy, " > ")) != NULL) {      //output redirection from a file exists w/ no pipes
+                //parse filename string, should only be one argument...
+                char **filename;
+                filename = malloc((3) * sizeof(char *));
+                int fileCount = 0;
+
+                //Using strtok_r, we will split on blank spaces as long as they are not within two surrounding double quotes
+                //tokenize an input string while not splitting on a space within two surrounding double quotes
+                char *pch1, *pch2, *save_ptr1, *save_ptr2;
+                int inQuotes = 0;   //boolean for if the token is currently within a pair of double quotes
+
+                //split first on the \" (quote) because that is the main thing to look for
+                pch1 = strtok_r(inputFile, "\"", &save_ptr1);
+
+                while (pch1 != NULL) {
+                    //if the first surrounding double quote as been found and delimited...
+                    if (inQuotes) {
+                        filename[fileCount] = malloc((maxArgLen + 1) * sizeof(char));
+                        strcpy(filename[fileCount], pch1);
+                        pch1 = strtok_r(NULL, "\"", &save_ptr1);
+                        inQuotes = 0;
+                        fileCount++;
+                        continue;
+                    }
+                    //else process/delimit the blank spaces normally within the second token pointer
+                    pch2 = strtok_r(pch1, " ", &save_ptr2);
+                    while (pch2 != NULL) {
+                        filename[fileCount] = malloc((maxArgLen + 1) * sizeof(char));
+                        strcpy(filename[fileCount], pch2);
+                        pch2 = strtok_r(NULL, " ", &save_ptr2);
+                        fileCount++;
+                    }
+                    //if a double quote is encountered, set inQuote to true, delimit at that double quote, and use the first token pointer
+                    pch1 = strtok_r(NULL, "\"", &save_ptr1);
+                    inQuotes = 1;
+
+                }
+                filename[fileCount] = 0;
+
+                if (fileCount == 1) {   //proper filename so parse the initial set of commands
+                    char **argv;
+                    argv = malloc((maxArgs + 1) * sizeof(char *));
+                    int argCount = 0;
+                    inQuotes = 0;   //boolean for if the token is currently within a pair of double quotes
+
+                    //split first on the \" because that is the main thing to look for
+                    pch1 = strtok_r(initialInput, "\"", &save_ptr1);
+
+                    while (pch1 != NULL) {
+                        //if the first surrounding double quote as been found and delimited...
+                        if (inQuotes) {
+                            argv[argCount] = malloc((maxArgLen + 1) * sizeof(char));
+                            strcpy(argv[argCount], pch1);
+                            pch1 = strtok_r(NULL, "\"", &save_ptr1);
+                            inQuotes = 0;
+                            argCount++;
+                            continue;
+                        }
+                        //else process/delimit the blank spaces normally within the second token pointer
+                        pch2 = strtok_r(pch1, " ", &save_ptr2);
+                        while (pch2 != NULL) {
+                            argv[argCount] = malloc((maxArgLen + 1) * sizeof(char));
+                            strcpy(argv[argCount], pch2);
+                            pch2 = strtok_r(NULL, " ", &save_ptr2);
+                            argCount++;
+                        }
+                        //if a double quote is encountered, set inQuote to true, delimit at that double quote, and use the first token pointer
+                        pch1 = strtok_r(NULL, "\"", &save_ptr1);
+                        inQuotes = 1;
+
+                    }
+                    argv[argCount] = 0;
+
+                    //We will run the command arguments and the filename in the input redirection method
+
+                    inputRedirect(argv, filename[0]);
+
+                    free(argv);
+
+                } else {
+                    printf("\nThat is an invalid set of arguments for the filename for output redirection...\n");
+                }
+            }
+        }
+
+        else if ((ret = strstr(inputCopy, " > ")) != NULL) {      //output redirection from a file exists w/ no pipes
             //get the number of " > " and parse the cmd lines; split replace the '>' with \a (bell escape character which is non-printing)
             //we can only have one output redirection here, so if there are somehow 2 or more, " > " occurrences, we'll return an error
             int orCount = 0;
@@ -182,23 +266,107 @@ int main() {
                 printf("\nThat is an invalid command...\n");
 
             } else {
-                //split into arrays of long input strings delimited by the now '\a' char
+                //split into 2 char pointer arrays of the long input strings delimited by the now '\a' char
                 int inputStrIndex = 0;
-                char **inputStr;
-                //1 pipe = 2 cmd lines; 2 pipes = 3 cmd lines; 3 pipes = 4 cmd lines...
-                inputStr = malloc((pipeCount + 1) * sizeof(char *));
+                char initialInput[1024];
+                char outputFile[1024];
 
                 char *token, *save_ptr;
                 token = strtok_r(inputCopy, "\a", &save_ptr);
 
-                //split on '\a' and we'll have extra white spaces, but that will be taken care of in next set of parsing
+                //split on '\a' and we'll have extra white spaces, but that will be taken care of in next set of parsing; should only bring back 2 strings tokens
                 while (token != NULL) {
-                    inputStr[inputStrIndex] = malloc((strlen(token) + 1) * sizeof(char));
-                    strcpy(inputStr[inputStrIndex], token);
+                    if (inputStrIndex == 0) {
+                        strcpy(initialInput, token);
+                    } else {
+                        strcpy(outputFile, token);
+                    }
 
                     token = strtok_r(NULL, "\a", &save_ptr);
                     inputStrIndex++;
                 }
+
+                //parse filename string, should only be one argument...
+                char **filename;
+                filename = malloc((3) * sizeof(char *));
+                int fileCount = 0;
+
+                //Using strtok_r, we will split on blank spaces as long as they are not within two surrounding double quotes
+                //tokenize an input string while not splitting on a space within two surrounding double quotes
+                char *pch1, *pch2, *save_ptr1, *save_ptr2;
+                int inQuotes = 0;   //boolean for if the token is currently within a pair of double quotes
+
+                //split first on the \" (quote) because that is the main thing to look for
+                pch1 = strtok_r(outputFile, "\"", &save_ptr1);
+
+                while (pch1 != NULL) {
+                    //if the first surrounding double quote as been found and delimited...
+                    if (inQuotes) {
+                        filename[fileCount] = malloc((maxArgLen + 1) * sizeof(char));
+                        strcpy(filename[fileCount], pch1);
+                        pch1 = strtok_r(NULL, "\"", &save_ptr1);
+                        inQuotes = 0;
+                        fileCount++;
+                        continue;
+                    }
+                    //else process/delimit the blank spaces normally within the second token pointer
+                    pch2 = strtok_r(pch1, " ", &save_ptr2);
+                    while (pch2 != NULL) {
+                        filename[fileCount] = malloc((maxArgLen + 1) * sizeof(char));
+                        strcpy(filename[fileCount], pch2);
+                        pch2 = strtok_r(NULL, " ", &save_ptr2);
+                        fileCount++;
+                    }
+                    //if a double quote is encountered, set inQuote to true, delimit at that double quote, and use the first token pointer
+                    pch1 = strtok_r(NULL, "\"", &save_ptr1);
+                    inQuotes = 1;
+
+                }
+                filename[fileCount] = 0;
+
+                if (fileCount == 1) {   //proper filename so parse the initial set of commands
+                    char **argv;
+                    argv = malloc((maxArgs + 1) * sizeof(char *));
+                    int argCount = 0;
+                    inQuotes = 0;   //boolean for if the token is currently within a pair of double quotes
+
+                    //split first on the \" because that is the main thing to look for
+                    pch1 = strtok_r(initialInput, "\"", &save_ptr1);
+
+                    while (pch1 != NULL) {
+                        //if the first surrounding double quote as been found and delimited...
+                        if (inQuotes) {
+                            argv[argCount] = malloc((maxArgLen + 1) * sizeof(char));
+                            strcpy(argv[argCount], pch1);
+                            pch1 = strtok_r(NULL, "\"", &save_ptr1);
+                            inQuotes = 0;
+                            argCount++;
+                            continue;
+                        }
+                        //else process/delimit the blank spaces normally within the second token pointer
+                        pch2 = strtok_r(pch1, " ", &save_ptr2);
+                        while (pch2 != NULL) {
+                            argv[argCount] = malloc((maxArgLen + 1) * sizeof(char));
+                            strcpy(argv[argCount], pch2);
+                            pch2 = strtok_r(NULL, " ", &save_ptr2);
+                            argCount++;
+                        }
+                        //if a double quote is encountered, set inQuote to true, delimit at that double quote, and use the first token pointer
+                        pch1 = strtok_r(NULL, "\"", &save_ptr1);
+                        inQuotes = 1;
+
+                    }
+                    argv[argCount] = 0;
+
+                    //We will run the command arguments and the filename in the output redirection method
+                    outputRedirect(argv, filename[0]);
+
+                    free(argv);
+
+                } else {
+                    printf("\nThat is an invalid set of arguments for the filename for output redirection...\n");
+                }
+
             }
 
         }

@@ -7,7 +7,6 @@
 
 
 
-
 void printPrompt();
 
 void printPath();
@@ -24,9 +23,9 @@ void executeP(char *argv[], pid_t pid);
 
 void executePipe(char ***argv, int *fd[], int pipeCount);
 
-void outputRedirect();
+void outputRedirect(char *argv[], char *filename);
 
-void inputRedirect();
+void inputRedirect(char *argv[], char *filename);
 
 
 #endif //End SHELL_H
