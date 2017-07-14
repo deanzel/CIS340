@@ -37,9 +37,9 @@ int main() {
         printPrompt();
 
 
-        //fgets(input, 4096, stdin);
-        //input[strcspn(input, "\n")] = 0;    //gets rid of newline at end of input
-        strcpy(input, "ls -l | grep -i txt | wc -c | grep 13 | grep 132");
+        fgets(input, 4096, stdin);
+        input[strcspn(input, "\n")] = 0;    //gets rid of newline at end of input
+        //strcpy(input, "ls -l | grep -i txt | wc -c | grep 13 | grep 132");
         //strcpy(input, "ls -l | grep -i txt | wc -c");
         strcpy(inputCopy, input);
 

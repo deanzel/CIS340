@@ -228,7 +228,7 @@ void executePipe(char ***argv, int* fd[], int pipeCount) {
 
     //for the very first cmd set, keep stdin at 0 but redirect output to pipe
     //case if we only have 1 pipe, then don't need recursive call
-    if (pipeCount == 1) {
+    if (pipeCount == 10000) {
         //fd[0] = malloc (2 * sizeof(int));
         //create the first pipe
         if (pipe(fd[0]) != 0) {
@@ -319,7 +319,8 @@ void executePipe(char ***argv, int* fd[], int pipeCount) {
                     //now close all other pipe connections
                     int j;
                     for (j = 0; j < pipeCount; j++) {
-                        if ((j < (i - 1)) || (j > i)) {
+                        //if ((j < (i - 1)) || (j > i)) {
+                        if ((j != (i - 1)) && (j != i)) {
                             close(fd[j][0]);
                             close(fd[j][1]);
                         }
@@ -383,6 +384,9 @@ void executePipe(char ***argv, int* fd[], int pipeCount) {
         //executeP in each child process according to the child id after pipes are all set up!!
         for (i = 0; i < pipeCount + 1; i++) {
             if (getpid() == childId[i]) {
+                if (i > 0) {
+                    waitpid(childId[i - 1], NULL, 0);
+                }
                 executeP(argv[i], 0);
                 //only reach if error
                 dup2(saved_stdout[i], 1);
