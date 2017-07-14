@@ -16,22 +16,25 @@ char pathEnv[1024];
 int maxArgs = 15;   //maximum number of Arguments per
 int maxArgLen = 100;
 
+//static pid_t pidFinal = 0;
+
 int main() {
     printf("\nWelcome to Dean Choi's customized Linux shell.\n");
 
     getcwd(cwd, 1024);
     pathEnv[0] = 0;
 
-    //addPath("/bin");
-    //addPath("/sbin");
-    //addPath("/usr/bin");
-    //cd("/Users/deanchoi");
+
+
+    addPath("/bin");
+    addPath("/sbin");
+    addPath("/usr/bin");
+    cd("/Users/deanchoi");
 
     while (1) {
         char input[4096];
         char inputCopy[4096];
         int pipeCount = 0;
-
 
         printPrompt();
 
@@ -72,9 +75,10 @@ int main() {
             }
             //Now, we will parse each input cmd line (that is its own pipe cmd) into individual argv[]
             //not sure what data type of argv will work until we test it later
-            char **argv[pipeCount + 1];
-            //char ***argv;
-            //argv = malloc((pipeCount + 1) * sizeof(int *));
+            //char **argv = calloc((size_t) (pipeCount + 1), sizeof(char *));
+            //char **argv[pipeCount + 1];
+
+            char ***argv = malloc((pipeCount + 1) * sizeof(char**));
 
             //for each input string we have separated, create into argv[i][]
             int i;
@@ -115,16 +119,91 @@ int main() {
             //the char *argv[pipeCount + 1][argCount] has been fully processed and we can send it into the pipe execute method along with the pipeCount
             //and we'll statically allocate the memory for the filedescriptor 2d array
             if (pipeCount > 0) {
-                int fd[pipeCount][2];
-                //int fd[2][2] = {0};
-                //memset(fd, 0, sizeof(fd));
+                int **fd = calloc((size_t) pipeCount, sizeof(int *));
+                int j;
+                for (j = 0; j < pipeCount; j++) {
+                    fd[j] = calloc(2, sizeof(int));
+                }
 
-                //executePipe(argv, (int**) fd, 0, pipeCount);
                 executePipe(argv, fd, pipeCount);
+
+                for (j = 0; j < pipeCount; j++){
+                    free(fd[j]);
+                }
+                free(fd);
+                free(argv);
             }
 
 
-        } else {    //no pipes exist in the input, so just one set of command arguments
+        } else if ((ret = strstr(inputCopy, " < ")) != NULL) {      //input redirection from a file exists w/ no pipes
+            //get the number of " < " and parse the cmd lines; split replace the '<' with \a (bell escape character which is non-printing)
+            //we can only have one input redirection here, so if there are somehow 2 or more, " < " occurrences, we'll return an error
+            int irCount = 0;
+            while (ret != NULL) {
+                irCount++;
+                ret[1] = '\a';
+
+                ret = strstr(inputCopy, " < ");
+            }
+            if (irCount > 1) {      //incorrect command error
+                printf("\nThat is an invalid command...\n");
+
+            } else {
+                //split into arrays of long input strings delimited by the now '\a' char
+                int inputStrIndex = 0;
+                char **inputStr;
+                //1 pipe = 2 cmd lines; 2 pipes = 3 cmd lines; 3 pipes = 4 cmd lines...
+                inputStr = malloc((pipeCount + 1) * sizeof(char *));
+
+                char *token, *save_ptr;
+                token = strtok_r(inputCopy, "\a", &save_ptr);
+
+                //split on '\a' and we'll have extra white spaces, but that will be taken care of in next set of parsing
+                while (token != NULL) {
+                    inputStr[inputStrIndex] = malloc((strlen(token) + 1) * sizeof(char));
+                    strcpy(inputStr[inputStrIndex], token);
+
+                    token = strtok_r(NULL, "\a", &save_ptr);
+                    inputStrIndex++;
+                }
+            }
+
+        } else if ((ret = strstr(inputCopy, " > ")) != NULL) {      //output redirection from a file exists w/ no pipes
+            //get the number of " > " and parse the cmd lines; split replace the '>' with \a (bell escape character which is non-printing)
+            //we can only have one output redirection here, so if there are somehow 2 or more, " > " occurrences, we'll return an error
+            int orCount = 0;
+            while (ret != NULL) {
+                orCount++;
+                ret[1] = '\a';
+
+                ret = strstr(inputCopy, " > ");
+            }
+            if (orCount > 1) {      //incorrect command error
+                printf("\nThat is an invalid command...\n");
+
+            } else {
+                //split into arrays of long input strings delimited by the now '\a' char
+                int inputStrIndex = 0;
+                char **inputStr;
+                //1 pipe = 2 cmd lines; 2 pipes = 3 cmd lines; 3 pipes = 4 cmd lines...
+                inputStr = malloc((pipeCount + 1) * sizeof(char *));
+
+                char *token, *save_ptr;
+                token = strtok_r(inputCopy, "\a", &save_ptr);
+
+                //split on '\a' and we'll have extra white spaces, but that will be taken care of in next set of parsing
+                while (token != NULL) {
+                    inputStr[inputStrIndex] = malloc((strlen(token) + 1) * sizeof(char));
+                    strcpy(inputStr[inputStrIndex], token);
+
+                    token = strtok_r(NULL, "\a", &save_ptr);
+                    inputStrIndex++;
+                }
+            }
+
+        }
+
+        else {    //no pipes exist in the input, no input/output redirection, so just one set of command arguments
 
             //limitation: we can only handle up to 15 arguments in each command line (could manually increase though since we use malloc)
             //and each argument size has a limit of 99 characters (this can be manually increased as well in the global variables)
@@ -199,12 +278,10 @@ int main() {
                 execute(argv);
             }
 
-            free(argv);     //deallocate argv[]
+            free(argv);
 
         }
     }
-
-
 
     return 0;
 

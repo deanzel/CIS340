@@ -22,10 +22,11 @@ void execute(char *argv[]);
 
 void executeP(char *argv[], pid_t pid);
 
-void handler(int signum);
+void executePipe(char ***argv, int *fd[], int pipeCount);
 
-//void oldexecutePipe(char ***argv, int **fd, int index, int pipeCount);
+void outputRedirect();
 
-void executePipe(char ***argv, int **fd, int pipeCount);
+void inputRedirect();
+
 
 #endif //End SHELL_H
